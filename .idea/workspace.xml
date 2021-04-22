@@ -6,7 +6,16 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d20ee30b-a740-4e15-93be-80f873f386a8" name="Default Changelist" comment="" />
+    <list default="true" id="d20ee30b-a740-4e15-93be-80f873f386a8" name="Default Changelist" comment="математические операции с интом">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/Ideone.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Ideone.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/Interpreter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Interpreter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Ideone.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Ideone.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,6 +28,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1pIe6tbLL4d9KWPt9bISeHsMq8L" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -26,6 +38,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="UI_DESIGNER_EDITOR_MODE.PaletteManager.STATE" value="left" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.STATE" value="right" />
     <property name="project.structure.last.edited" value="Artifacts" />
@@ -66,43 +79,62 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="математические операции с интом" />
+    <option name="LAST_COMMIT_MESSAGE" value="математические операции с интом" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1618403054612">
+    <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1619096243265">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1618403054612" />
+    <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1619096243265" />
     <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser" timestamp="1618399902426">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1010@0.0.1680.1010" timestamp="1618399902426" />
-    <state x="569" y="288" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1618403182408">
+    <state x="569" y="288" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1619096242392">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="569" y="288" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1618403182408" />
+    <state x="569" y="288" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1619096242392" />
     <state x="725" y="391" key="#com.intellij.uiDesigner.palette.ComponentItemDialog.OneOff" timestamp="1618170299420">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="725" y="391" key="#com.intellij.uiDesigner.palette.ComponentItemDialog.OneOff/0.0.1680.1010@0.0.1680.1010" timestamp="1618170299420" />
+    <state x="494" y="98" key="CommitChangelistDialog2" timestamp="1619096836686">
+      <screen x="0" y="0" width="1680" height="1010" />
+    </state>
+    <state x="494" y="98" key="CommitChangelistDialog2/0.0.1680.1010@0.0.1680.1010" timestamp="1619096836686" />
     <state x="619" y="245" key="FileChooserDialogImpl" timestamp="1616456010630">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="619" y="245" key="FileChooserDialogImpl/0.0.1680.1010@0.0.1680.1010" timestamp="1616456010630" />
-    <state width="1636" height="272" key="GridCell.Tab.0.bottom" timestamp="1618409664329">
+    <state width="1636" height="272" key="GridCell.Tab.0.bottom" timestamp="1619096683568">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1618409664329" />
-    <state width="1636" height="272" key="GridCell.Tab.0.center" timestamp="1618409664329">
+    <state width="1636" height="272" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1619096683568" />
+    <state width="1636" height="272" key="GridCell.Tab.0.center" timestamp="1619096683567">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1618409664329" />
-    <state width="1636" height="272" key="GridCell.Tab.0.left" timestamp="1618409664329">
+    <state width="1636" height="272" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1619096683567" />
+    <state width="1636" height="272" key="GridCell.Tab.0.left" timestamp="1619096683567">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1618409664329" />
-    <state width="1636" height="272" key="GridCell.Tab.0.right" timestamp="1618409664329">
+    <state width="1636" height="272" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1619096683567" />
+    <state width="1636" height="272" key="GridCell.Tab.0.right" timestamp="1619096683568">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1618409664329" />
+    <state width="1636" height="272" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1619096683568" />
     <state width="1636" height="241" key="GridCell.Tab.1.bottom" timestamp="1618409612882">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -123,6 +155,10 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="320" y="78" key="SettingsEditor/0.0.1680.1010@0.0.1680.1010" timestamp="1618403196351" />
+    <state x="670" y="373" key="VCS.EditChangelistDialog" timestamp="1619095538340">
+      <screen x="0" y="0" width="1680" height="1010" />
+    </state>
+    <state x="670" y="373" key="VCS.EditChangelistDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1619095538340" />
     <state x="222" y="124" key="new project wizard" timestamp="1616456016740">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>

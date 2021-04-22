@@ -44,11 +44,12 @@ class Ideone {
         return stack.pop();
     }
 
-    public static void Main() {
+    public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         String s = in.nextLine();
         ExpressionParser n = new ExpressionParser();
         List<String> expression = ExpressionParser.parse(s);
+        System.out.println(expression);
         boolean flag = ExpressionParser.flag;
         if (flag) {
             for (String x : expression) System.out.print(x + " ");

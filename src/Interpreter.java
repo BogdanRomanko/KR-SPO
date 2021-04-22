@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Interpreter {
@@ -9,10 +11,17 @@ public class Interpreter {
     private ArrayList<Object> varValue = new ArrayList <Object>();
     private Scanner scanner = new Scanner(System.in);
 
+    /*
+     * Конструктор интерпритатора, принимающий полиз и возвращающий
+     * основной экземпляр интерпритатора
+     */
     public Interpreter(Poliz poliz) {
         this.poliz = poliz;
     }
 
+    /*
+     * Конструктор дополнительного интерпритатора, вызываемого в циклах или условиях
+     */
     public Interpreter(Poliz poliz, ArrayList<String> varName, ArrayList<String> varType, ArrayList<Object> varValue){
         this.poliz = poliz;
         this.varName = varName;
@@ -49,7 +58,11 @@ public class Interpreter {
             }
             //если значение переменной предстоит рассчитать
             else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
-                //todo сделать
+                List<String> expression = StrToListStr(poliz.get(index + 3));
+                varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
+                varType.add("int");
+                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
             }
             //если значение переменной необходимо считать с консоли
             else {
@@ -151,8 +164,24 @@ public class Interpreter {
             }
         }
     }
+
+    private List<String> StrToListStr(String text){
+        List<String> result =  new ArrayList<String>();
+
+        String math = text.split(" - ")[0];
+        math = math.substring(1, math.length() - 1);
+
+        String[] tokens = math.split(", ");
+
+        for (String s: tokens) {
+            result.add(s);
+        }
+
+        return result;
+    }
 /*
 todo действия над переменными
+todo - мат операции
 todo условия
 todo циклы
 todo goto

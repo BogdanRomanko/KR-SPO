@@ -49,7 +49,7 @@ public class Main {
 //                    "}";
 
         String pr = "int main(){\n" +
-                "int a = 12;\n"+
+                "int a = 12 + 7 + 8;\n"+
                 "int b = cin();\n" +
                 "a = cin();\n" +
                 "double c = cin();\n" +
