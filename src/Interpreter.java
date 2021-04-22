@@ -178,7 +178,7 @@ public class Interpreter {
                     /*//в зависимости от типа переменной, изменяем её значение
                     if (varType.get(i).equals("int")){
                     todo пиздец, подумай над мутациями
-                        varValue.set(i, );
+                    varValue.set(i, );
                     } else if (varType.get(i).equals("double")){
 
                         varValue.set(i, );
