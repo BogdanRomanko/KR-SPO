@@ -58,6 +58,7 @@ public class Interpreter {
             }
             //если значение переменной предстоит рассчитать
             else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
+                // TODO: заменять переменные на их значения внутри выражения
                 List<String> expression = StrToListStr(poliz.get(index + 3));
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
