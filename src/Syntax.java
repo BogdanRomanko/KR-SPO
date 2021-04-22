@@ -865,6 +865,7 @@ first:
         poliz.toPoliz("G" + lexer.text.get(index + 1));
     }
 
+    //todo не проверяется на мутацию, если там больше символом - скорее всего ошибка
     private void checkOther(int index) {
         //проверяем на мутации переменных
         for (int i = 0; i < varName.size(); i++)
@@ -872,6 +873,7 @@ first:
                 if (lexer.text.get(index + 1).equals("=")) {
                     if (lexer.text.get(index - 1).equals(";")) {
                         //если изменяется переменная типа int
+                        System.out.println(varType.get(i));
                         if (varType.get(i).equals("int")) {
                             //если значение переменной явно указано
                             if (lexer.text.get(index + 2).matches("\\d{1,}") && lexer.text.get(index + 3).equals(";")) {
@@ -910,6 +912,28 @@ first:
                                     varValue.set(i, lexer.text.get(index + 2));
                                     poliz.toPoliz(varName.get(i));
                                     poliz.toPoliz(lexer.text.get(index + 2));
+                                    poliz.toPoliz("=");
+                                }
+                                //если значение переменной необходимо вычислить
+                                else if (!lexer.text.get(index + 3).equals(";") && !lexer.text.get(index + 2).equals("cin")) {
+                                    int j = index;
+                                    String math = "";
+                                    while (!lexer.text.get(j).equals(";")) {
+                                        math += lexer.text.get(j) + " ";
+                                        j++;
+                                    }
+
+                                    math = math(math, lexer.line.get(i));
+                                    System.out.println(math);
+
+                                    poliz.toPoliz(varName.get(i));
+                                    poliz.toPoliz(math);
+                                    poliz.toPoliz("=");
+                                }
+                                //если значение переменной необходимо считать с консоли
+                                else {
+                                    poliz.toPoliz(varName.get(i));
+                                    poliz.toPoliz("R");
                                     poliz.toPoliz("=");
                                 }
                             }
