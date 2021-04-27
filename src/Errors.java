@@ -32,8 +32,13 @@ public class Errors {
             ""
     };
 
-    public void errors(int error, int line) {
+    public static void errors(int error, int line) {
         System.out.println("[ОШИБКА] - " + errors[error] + "\nСтрока " + (line + 1));
+        System.exit(1);
+    }
+
+    public static void errors(int error) {
+        System.out.println("[ОШИБКА] - " + errors[error]);
         System.exit(1);
     }
 

@@ -10,6 +10,7 @@ public class Interpreter {
     private ArrayList<String> varType = new ArrayList <String>();
     private ArrayList<Object> varValue = new ArrayList <Object>();
     private Scanner scanner = new Scanner(System.in);
+    private int count = 0;
 
     /*
      * Конструктор интерпритатора, принимающий полиз и возвращающий
@@ -33,13 +34,13 @@ public class Interpreter {
      * главный метод интепритатора, запускающий интерпритацию
      */
     public void start(){
-        for (int i = 0; i < poliz.getSize() - 1; i++){
-            if (poliz.get(i).split(" - ")[0].charAt(0) == 'V')
-                variable(i);
-            else if (poliz.get(i).split(" - ")[0].equals("W"))
-                print(i);
+        for ( count = 0; count < poliz.getSize() - 1; count++){
+            if (poliz.get(count).split(" - ")[0].charAt(0) == 'V')
+                variable(count);
+            else if (poliz.get(count).split(" - ")[0].equals("W"))
+                print(count);
             else
-                other(i);
+                other(count);
         }
     }
 
@@ -55,15 +56,28 @@ public class Interpreter {
                 varValue.add(Integer.parseInt(poliz.get(index + 3).split(" - ")[0]));
                 varType.add("int");
                 System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
             //если значение переменной предстоит рассчитать
             else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
-                // TODO: заменять переменные на их значения внутри выражения
+                //если внутри считаемого значения есть другие переменные
+                for (int i = 0; i < varName.size(); i++){
+                    //если встречаем имя существующей переменной
+                    if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))){
+                        //проверяем является ли переменная нужного нам типа
+                        if (!varType.get(i).equals("int"))
+                            Errors.errors(7);
+                        //заменяем имя переменной на её значение
+                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                    }
+                }
+
                 List<String> expression = StrToListStr(poliz.get(index + 3));
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
                 varType.add("int");
                 System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
             //если значение переменной необходимо считать с консоли
             else {
@@ -73,6 +87,7 @@ public class Interpreter {
                 varValue.add(temp);
                 varType.add("int");
                 System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
         }
         //если переменная типа double
@@ -83,10 +98,25 @@ public class Interpreter {
                 varValue.add(Double.parseDouble(poliz.get(index + 3).split(" - ")[0]));
                 varType.add("double");
                 System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
             //если значение переменной предстоит рассчитать
             else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
-                //todo сделать
+                //если внутри считаемого значения есть другие переменные
+                for (int i = 0; i < varName.size(); i++){
+                    //если встречаем имя существующей переменной
+                    if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))){
+                        //заменяем имя переменной на её значение
+                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                    }
+                }
+
+                List<String> expression = StrToListStr(poliz.get(index + 3));
+                varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                varValue.add(Double.parseDouble(Ideone.calc(expression).toString()));
+                varType.add("double");
+                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
             //если значение переменной необходимо считать с консоли
             else {
@@ -96,6 +126,7 @@ public class Interpreter {
                 varValue.add(temp);
                 varType.add("double");
                 System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
         }
         //если переменная типа string
@@ -106,10 +137,12 @@ public class Interpreter {
                 varValue.add(poliz.get(index + 3).split(" - ")[0]);
                 varType.add("string");
                 System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
             //если значение переменной предстоит рассчитать
             else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
                 //todo сделать
+                count += 3;
             }
             //если значение переменной необходимо считать с консоли
             else {
@@ -120,6 +153,7 @@ public class Interpreter {
                 varValue.add(temp);
                 varType.add("string");
                 System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                count += 3;
             }
         }
     }
@@ -127,6 +161,7 @@ public class Interpreter {
     private void print(int index){
         String print = poliz.get(index + 1).split(" - ")[0];
         System.out.println("[INTERPRETER] - print:" + print);
+        count += 1;
     }
 
     private void other(int index){
@@ -139,8 +174,20 @@ public class Interpreter {
                     System.out.println("[INTERPRETER] - " + varType.get(i) + " " + varName.get(i) + " = " + varValue.get(i));
                 }
                 //если значение переменной необходимо вычислить
-                else if (poliz.get(index + 1).split(" - ")[0].contains("[")){
-                    //todo сделать
+                else if (poliz.get(index + 1).split(" - ")[0].contains("[")) {
+                    /*//в зависимости от типа переменной, изменяем её значение
+                    if (varType.get(i).equals("int")){
+                    todo пиздец, подумай над мутациями
+                    varValue.set(i, );
+                    } else if (varType.get(i).equals("double")){
+
+                        varValue.set(i, );
+                    }
+                    else if (varType.get(i).equals("string")){
+
+                        varValue.set(i, );
+                    }
+                    System.out.println("[INTERPRETER] - " + varType.get(i) + " " + varName.get(i) + " = " + varValue.get(i));*/
                 }
                 //если значение переменной необходимо считать с консоли
                 else if (poliz.get(index + 1).split(" - ")[0].equals("R")){
@@ -166,6 +213,10 @@ public class Interpreter {
         }
     }
 
+    /*
+     * Метод, конвертирующий строку ПОЛИЗа в
+     * List для обработки её классом математических вычислений Ideone
+     */
     private List<String> StrToListStr(String text){
         List<String> result =  new ArrayList<String>();
 

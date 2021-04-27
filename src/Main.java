@@ -49,11 +49,13 @@ public class Main {
 //                    "}";
 
         String pr = "int main(){\n" +
-                "int a = 12 + 7 + 8;\n"+
-                "int b = cin();\n" +
-                "a = cin();\n" +
-                "double c = cin();\n" +
-                "string d = cin();\n" +
+                "int g = 15;\n" +
+                "int a = 12 + 7 + 8 - g;\n"+
+                //"int b = cin();\n" +
+                //"a = cin();\n" +
+                //"double c = cin();\n" +
+                "c = cin();\n" +
+                //"string d = cin();\n" +
                 " cout(\"HELLO, LYOHA EBAT'\");\n" +
                 " cout(\"HOW ARE YOU?\");\n" +
                 "return 0;\n" +
@@ -63,5 +65,6 @@ public class Main {
         Syntax syntax = new Syntax(lexer);
         Interpreter interpreter = new Interpreter(syntax.getPoliz());
         interpreter.start();
+        new UI();
     }
 }
