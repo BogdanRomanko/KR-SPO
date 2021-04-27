@@ -1,19 +1,18 @@
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
-/*
- * todo окна посмотреть у Лёхи
- * todo справка
- */
+
 /*
  * Класс с визуальным интерфейсом пользователя
  */
 public class UI extends JFrame {
     private String fileName = "";
-    JInternalFrame editor;
-
+    private JInternalFrame editor;
+    private JTextArea editorTextArea;
 
     /*
      * Констуктор создания визуального интерфейса пользователя
@@ -24,6 +23,7 @@ public class UI extends JFrame {
          */
         super("Small C++");
         setSize(980, 720);
+        setMinimumSize(new Dimension(500, 200));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         /*
@@ -74,6 +74,7 @@ public class UI extends JFrame {
          */
         JMenuItem viewEditor = new JMenuItem("Показать текстовый редактор");
         JMenuItem hideEditor = new JMenuItem("Скрыть текстовый редактор");
+        hideEditor.setVisible(false);
 
         /*
          * Подпункты пункта меню Примеры
@@ -139,8 +140,15 @@ public class UI extends JFrame {
     private JInternalFrame getEditorFrame(){
         editor = new JInternalFrame("Текстовый редактор", true, true, true, true);
         editor.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        editor.setSize(200, 350);
-        editor.setVisible(true);
+        editor.setSize(500, 350);
+        editor.setMinimumSize(new Dimension(500, 350));
+        editor.addInternalFrameListener(viewAndHideEditor());
+
+        editorTextArea = new JTextArea();
+        JScrollPane pane1 = new JScrollPane(editorTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        pane1.setRowHeaderView(new TextLineNumber(editorTextArea));
+        editor.add(pane1);
+
         return editor;
     }
 
@@ -291,6 +299,8 @@ public class UI extends JFrame {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(true);
                 editor.setVisible(true);
             }
         };
@@ -303,7 +313,28 @@ public class UI extends JFrame {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(false);
                 editor.setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик вызова и сокрытия окна текстового редактора
+     */
+    private InternalFrameListener viewAndHideEditor(){
+        return new InternalFrameAdapter() {
+            @Override
+            public void internalFrameOpened(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(true);
+            }
+
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(false);
             }
         };
     }
