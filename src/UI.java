@@ -11,7 +11,12 @@ import java.io.*;
  */
 public class UI extends JFrame {
     private String fileName = "";
+
     private JInternalFrame editor;
+    private JInternalFrame lexer;
+    private JInternalFrame lexerTable;
+    private JInternalFrame poliz;
+
     private JTextArea editorTextArea;
 
     /*
@@ -38,6 +43,9 @@ public class UI extends JFrame {
         add(desktopPane);
 
         desktopPane.add(getEditorFrame());
+        desktopPane.add(getLexerFrame());
+        desktopPane.add(getLexerTable());
+        desktopPane.add(getPolizFrame());
 
         setVisible(true);
     }
@@ -68,6 +76,9 @@ public class UI extends JFrame {
          * Подпункты пункта меню Вид
          */
         JMenu editor = new JMenu("Текстовый редактор");
+        JMenu lexer = new JMenu("Лексический анализатор");
+        JMenu lexerTable = new JMenu("Таблица лексического анализатора");
+        JMenu poliz = new JMenu("ПОЛИЗ");
 
         /*
          * Подпункты пункта Текстовый редактор
@@ -75,6 +86,27 @@ public class UI extends JFrame {
         JMenuItem viewEditor = new JMenuItem("Показать текстовый редактор");
         JMenuItem hideEditor = new JMenuItem("Скрыть текстовый редактор");
         hideEditor.setVisible(false);
+
+        /*
+         * Подпункты пункта Лексический анализатор
+         */
+        JMenuItem viewLexer = new JMenuItem("Показать лексический анализатор");
+        JMenuItem hideLexer = new JMenuItem("Скрыть лексический анализатор");
+        hideLexer.setVisible(false);
+
+        /*
+         * Подпункты пункта Таблица лексического анализатора
+         */
+        JMenuItem viewLexerTable = new JMenuItem("Показать таблицу лексического анализатора");
+        JMenuItem hideLexerTable = new JMenuItem("Скрыть таблицу лексического анализатора");
+        hideLexerTable.setVisible(false);
+
+        /*
+         * Подпункты пункта ПОЛИЗ
+         */
+        JMenuItem viewPoliz = new JMenuItem("Показать ПОЛИЗ");
+        JMenuItem hidePoliz = new JMenuItem("Скрыть ПОЛИЗ");
+        hidePoliz.setVisible(false);
 
         /*
          * Подпункты пункта меню Примеры
@@ -99,7 +131,14 @@ public class UI extends JFrame {
         newFile.addActionListener(newFileAction());
 
         viewEditor.addActionListener(viewEditor());
+        viewLexer.addActionListener(viewLexer());
+        viewLexerTable.addActionListener(viewLexerTable());
+        viewPoliz.addActionListener(viewPoliz());
+
         hideEditor.addActionListener(hideEditor());
+        hideLexer.addActionListener(hideLexer());
+        hideLexerTable.addActionListener(hideLexerTable());
+        hidePoliz.addActionListener(hidePoliz());
 
         /*
          * Добавляем все подпункты в пункты меню
@@ -114,7 +153,22 @@ public class UI extends JFrame {
 
         editor.add(viewEditor);
         editor.add(hideEditor);
+
+        lexer.add(viewLexer);
+        lexer.add(hideLexer);
+
+        lexerTable.add(viewLexerTable);
+        lexerTable.add(hideLexerTable);
+
+        poliz.add(viewPoliz);
+        poliz.add(hidePoliz);
+
         view.add(editor);
+        view.add(new JSeparator());
+        view.add(lexer);
+        view.add(lexerTable);
+        view.add(new JSeparator());
+        view.add(poliz);
 
         for (JMenuItem item : mExamples)
             examples.add(item);
@@ -150,6 +204,48 @@ public class UI extends JFrame {
         editor.add(pane1);
 
         return editor;
+    }
+
+    /*
+     * Метод, возвращающий окно вывода лексического анализатора
+     */
+    private JInternalFrame getLexerFrame() {
+        lexer = new JInternalFrame("Лексический анализатор", true, true, true, true);
+        lexer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        lexer.setSize(450, 500);
+        lexer.setMinimumSize(new Dimension(450, 500));
+
+        lexer.addInternalFrameListener(viewAndHideLexer());
+
+        return lexer;
+    }
+
+    /*
+     * Метод, возвращающий окно вывода таблицы лексического анализатора
+     */
+    public JInternalFrame getLexerTable() {
+        lexerTable = new JInternalFrame("Лексическая таблица", true, true, true, true);
+        lexerTable.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        lexerTable.setSize(450, 500);
+        lexerTable.setMinimumSize(new Dimension(450, 500));
+
+        lexerTable.addInternalFrameListener(viewAndHideLexerTable());
+
+        return lexerTable;
+    }
+
+    /*
+     * Метод, возвращающий окно вывода перевода программы в ПОЛИЗ
+     */
+    public JInternalFrame getPolizFrame() {
+        poliz = new JInternalFrame("ПОЛИЗ", true, true, true, true);
+        poliz.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        poliz.setSize(450, 500);
+        poliz.setMinimumSize(new Dimension(450, 500));
+
+        poliz.addInternalFrameListener(viewAndHidePoliz());
+
+        return poliz;
     }
 
     /*
@@ -335,6 +431,147 @@ public class UI extends JFrame {
             public void internalFrameClosing(InternalFrameEvent e) {
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(true);
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик вызова окна лексического анализатора
+     */
+    private ActionListener viewLexer(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(1).setVisible(true);
+                lexer.setVisible(true);
+            }
+        };
+    }
+
+    /*
+     * Обработчик сокрытия окна лексического анализатора
+     */
+    private ActionListener hideLexer(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(1).setVisible(false);
+                lexer.setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик вызова и сокрытия окна лексического анализатора
+     */
+    private InternalFrameListener viewAndHideLexer(){
+        return new InternalFrameAdapter() {
+            @Override
+            public void internalFrameOpened(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(1).setVisible(true);
+            }
+
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(2)).getItem(1).setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик вызова окна текстового таблицы лексического анализатора
+     */
+    private ActionListener viewLexerTable(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(1).setVisible(true);
+                lexerTable.setVisible(true);
+            }
+        };
+    }
+
+    /*
+     * Обработчик сокрытия окна таблицы лексического анализатора
+     */
+    private ActionListener hideLexerTable(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(1).setVisible(false);
+                lexerTable.setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик вызова и сокрытия окна таблицы лексического анализатора
+     */
+    private InternalFrameListener viewAndHideLexerTable(){
+        return new InternalFrameAdapter() {
+            @Override
+            public void internalFrameOpened(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(1).setVisible(true);
+            }
+
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(3)).getItem(1).setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик вызова окна ПОЛИЗа
+     */
+    private ActionListener viewPoliz(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(1).setVisible(true);
+                poliz.setVisible(true);
+            }
+        };
+    }
+
+    /*
+     * Обработчик сокрытия окна ПОЛИЗа
+     */
+    private ActionListener hidePoliz(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(1).setVisible(false);
+                poliz.setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик вызова и сокрытия окна ПОЛИЗа
+     */
+    private InternalFrameListener viewAndHidePoliz(){
+        return new InternalFrameAdapter() {
+            @Override
+            public void internalFrameOpened(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(0).setVisible(false);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(1).setVisible(true);
+            }
+
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(0).setVisible(true);
+                ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(1).setVisible(false);
             }
         };
     }
