@@ -17,6 +17,8 @@ public class UI extends JFrame {
     private JInternalFrame lexerTable;
     private JInternalFrame poliz;
 
+    public Console console;
+
     private JTextArea editorTextArea;
 
     /*
@@ -197,6 +199,7 @@ public class UI extends JFrame {
         editor.setSize(500, 350);
         editor.setMinimumSize(new Dimension(500, 350));
         editor.addInternalFrameListener(viewAndHideEditor());
+        editor.setLayout(new BorderLayout());
 
         /*
          * Добавляем текстовый редактор с подсчётом строк
@@ -204,9 +207,40 @@ public class UI extends JFrame {
         editorTextArea = new JTextArea();
         JScrollPane pane1 = new JScrollPane(editorTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         pane1.setRowHeaderView(new TextLineNumber(editorTextArea));
-        editor.add(pane1, BorderLayout.NORTH);
+        pane1.setPreferredSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.75)));
+        pane1.setSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.75)));
+        editor.add(pane1, BorderLayout.CENTER);
 
+        /*
+         * Добавляем консоль в окно текстового редактора
+         */
+        console = new Console();
+        JScrollPane pane2 = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        pane2.setPreferredSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.35)));
+        pane2.setSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.35)));
 
+        JPanel bottom = new JPanel();
+        bottom.setLayout(new BorderLayout());
+        bottom.add(new Label("Консоль"), BorderLayout.NORTH);
+        bottom.add(pane2, BorderLayout.SOUTH);
+
+        editor.add(bottom, BorderLayout.SOUTH);
+
+        JMenuBar menuBar = new JMenuBar();
+        JButton buttonRun = new JButton("Запустить");
+
+        buttonRun.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Lexer lexer = new Lexer(editorTextArea.getText());
+                Syntax syntax = new Syntax(lexer);
+                Interpreter interpreter = new Interpreter(syntax.getPoliz(), UI.this);
+                interpreter.start();
+            }
+        });
+
+        menuBar.add(buttonRun);
+        editor.setJMenuBar(menuBar);
 
         return editor;
     }

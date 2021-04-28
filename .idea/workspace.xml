@@ -7,7 +7,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d20ee30b-a740-4e15-93be-80f873f386a8" name="Default Changelist" comment="FileMenu - 90%&#10;ViewMenu - 100%&#10;Examples - only visual&#10;About and Help - only visual&#10;&#10;TextEditor without Console&#10;All others frames - just frames&#10;&#10;ToolBar - 0%&#10;&#10;Icons - 0%">
+      <change afterPath="$PROJECT_DIR$/src/Console.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$10.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$10.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$11.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$11.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$12.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$12.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$13.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$13.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$14.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$14.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$15.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$15.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$16.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$16.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$2$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$3$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$3$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$4$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$4$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$7.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$7.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$8.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$8.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI$9.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$9.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/UI.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UI.java" afterDir="false" />
     </list>
     <list id="d6c01aee-83ef-4b45-a905-4f785256729f" name="New changelist" comment="" />
@@ -189,10 +212,10 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1619096243265" />
-    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser" timestamp="1619557926451">
+    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser" timestamp="1619625976379">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1010@0.0.1680.1010" timestamp="1619557926451" />
+    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1010@0.0.1680.1010" timestamp="1619625976379" />
     <state x="569" y="288" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1619096242392">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -217,22 +240,22 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="619" y="245" key="FileChooserDialogImpl/0.0.1680.1010@0.0.1680.1010" timestamp="1616456010630" />
-    <state width="1636" height="272" key="GridCell.Tab.0.bottom" timestamp="1619559012697">
+    <state width="1636" height="272" key="GridCell.Tab.0.bottom" timestamp="1619629323559">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1619559012697" />
-    <state width="1636" height="272" key="GridCell.Tab.0.center" timestamp="1619559012697">
+    <state width="1636" height="272" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1619629323559" />
+    <state width="1636" height="272" key="GridCell.Tab.0.center" timestamp="1619629323559">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1619559012697" />
-    <state width="1636" height="272" key="GridCell.Tab.0.left" timestamp="1619559012697">
+    <state width="1636" height="272" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1619629323559" />
+    <state width="1636" height="272" key="GridCell.Tab.0.left" timestamp="1619629323559">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1619559012697" />
-    <state width="1636" height="272" key="GridCell.Tab.0.right" timestamp="1619559012697">
+    <state width="1636" height="272" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1619629323559" />
+    <state width="1636" height="272" key="GridCell.Tab.0.right" timestamp="1619629323559">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1619559012697" />
+    <state width="1636" height="272" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1619629323559" />
     <state width="1636" height="241" key="GridCell.Tab.1.bottom" timestamp="1619109583971">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>

@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,11 +11,14 @@ public class Interpreter {
     private Scanner scanner = new Scanner(System.in);
     private int count = 0;
 
+    private UI ui;
+
     /*
      * Конструктор интерпритатора, принимающий полиз и возвращающий
      * основной экземпляр интерпритатора
      */
-    public Interpreter(Poliz poliz) {
+    public Interpreter(Poliz poliz, UI ui) {
+        this.ui = ui;
         this.poliz = poliz;
     }
 
@@ -55,7 +57,7 @@ public class Interpreter {
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(Integer.parseInt(poliz.get(index + 3).split(" - ")[0]));
                 varType.add("int");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
             //если значение переменной предстоит рассчитать
@@ -76,17 +78,19 @@ public class Interpreter {
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
                 varType.add("int");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
             //если значение переменной необходимо считать с консоли
             else {
-                System.out.print("[INTERPRETER] READ:");
+                ui.console.write("[INTERPRETER] READ:");
+                int temp1 = Integer.parseInt(ui.console.read());
                 int temp = scanner.nextInt();
+                ui.console.deleteListener();
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(temp);
+                varValue.add(temp1);
                 varType.add("int");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
         }
@@ -97,7 +101,7 @@ public class Interpreter {
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(Double.parseDouble(poliz.get(index + 3).split(" - ")[0]));
                 varType.add("double");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
             //если значение переменной предстоит рассчитать
@@ -115,17 +119,18 @@ public class Interpreter {
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(Double.parseDouble(Ideone.calc(expression).toString()));
                 varType.add("double");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
             //если значение переменной необходимо считать с консоли
             else {
-                System.out.print("[INTERPRETER] READ:");
+                ui.console.write("[INTERPRETER] READ:");
                 double temp = scanner.nextDouble();
+                double temp1 = Double.parseDouble(ui.console.read());
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(temp);
                 varType.add("double");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
         }
@@ -136,7 +141,7 @@ public class Interpreter {
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(poliz.get(index + 3).split(" - ")[0]);
                 varType.add("string");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
             //если значение переменной предстоит рассчитать
@@ -160,7 +165,7 @@ public class Interpreter {
 
     private void print(int index){
         String print = poliz.get(index + 1).split(" - ")[0];
-        System.out.println("[INTERPRETER] - print:" + print);
+        ui.console.write("[INTERPRETER] - print:" + print);
         count += 1;
     }
 

@@ -61,10 +61,6 @@ public class Main {
                 "return 0;\n" +
                 "}";
 
-        lexer = new Lexer(pr);
-        Syntax syntax = new Syntax(lexer);
-        Interpreter interpreter = new Interpreter(syntax.getPoliz());
-        interpreter.start();
-        new UI();
+        UI ui = new UI();
     }
 }
