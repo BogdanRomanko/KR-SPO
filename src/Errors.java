@@ -32,6 +32,8 @@ public class Errors {
             ""
     };
 
+    private static int count = 0;
+
     public static void errors(int error, int line) {
         System.out.println("[ОШИБКА] - " + errors[error] + "\nСтрока " + (line + 1));
         System.exit(1);
@@ -42,8 +44,17 @@ public class Errors {
         System.exit(1);
     }
 
-    public String getErrors(int error, int line){
+    public static String getErrors(int error, int line){
+        count++;
         return "[ОШИБКА] - " + errors[error] + "\nСтрока " + (line + 1);
+    }
+
+    public static boolean isErrors(){
+        return count != 0;
+    }
+
+    public static void clearErrors(){
+        count = 0;
     }
 
 }

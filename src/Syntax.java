@@ -16,12 +16,16 @@ public class Syntax {
     private HashMap<String, Integer> parenthesisElse = new HashMap<>();
 
     private ArrayList<String> labels;
-    private Errors errors = new Errors();
 
     private Poliz poliz = new Poliz();
 
-    Syntax(Lexer lexer){
+    private UI ui;
+
+    Syntax(Lexer lexer, UI ui) {
         this.lexer = lexer;
+        this.ui = ui;
+
+        Errors.clearErrors();
 
         varName = new ArrayList <String>();
         varType = new ArrayList <String>();
@@ -84,21 +88,22 @@ public class Syntax {
             System.out.println("Футер программы - OK");
 
         for (String a: poliz.getAll()) {
+            ui.polizArea.setText(ui.polizArea.getText() + a + "\n");
             System.out.println(a);
         }
     }
 
     private boolean checkStart() {
         if (!lexer.letter.get(0).equals("n") && !lexer.text.get(0).equals("int"))
-            errors.errors(0, lexer.line.get(0));
+            ui.console.write(Errors.getErrors(0, lexer.line.get(0)));
         else if (!lexer.letter.get(1).equals("k") && !lexer.text.get(1).equals("main"))
-            errors.errors(0, lexer.line.get(1));
+            ui.console.write(Errors.getErrors(0, lexer.line.get(1)));
         else if (!lexer.letter.get(2).equals("s") && !lexer.text.get(2).equals("("))
-            errors.errors(0, lexer.line.get(2));
+            ui.console.write(Errors.getErrors(0, lexer.line.get(2)));
         else if (!lexer.letter.get(3).equals("s") && !lexer.text.get(3).equals(")"))
-            errors.errors(0, lexer.line.get(3));
+            ui.console.write(Errors.getErrors(0, lexer.line.get(3)));
         else if (!lexer.letter.get(4).equals("s") && !lexer.text.get(4).equals("{)}"))
-            errors.errors(0, lexer.line.get(4));
+            ui.console.write(Errors.getErrors(0, lexer.line.get(4)));
         else {
             poliz.toPoliz("START");
             return true;
@@ -109,13 +114,13 @@ public class Syntax {
 
     private boolean checkEnd(){
         if (!lexer.letter.get(lexer.letter.size() - 4).equals("k") && !lexer.text.get(lexer.letter.size() - 4).equals("return"))
-            errors.errors(1, lexer.line.get(lexer.letter.size() - 4));
+            ui.console.write(Errors.getErrors(1, lexer.line.get(lexer.letter.size() - 4)));
         else if (!lexer.letter.get(lexer.letter.size() - 3).equals("i") && !lexer.text.get(lexer.letter.size() -3).equals("0"))
-            errors.errors(1, lexer.line.get(lexer.letter.size() - 3));
+            ui.console.write(Errors.getErrors(1, lexer.line.get(lexer.letter.size() - 3)));
         else if (!lexer.letter.get(lexer.letter.size() - 2).equals("s") && !lexer.text.get(lexer.letter.size() -2).equals(";"))
-            errors.errors(1, lexer.line.get(lexer.letter.size() - 2));
+            ui.console.write(Errors.getErrors(1, lexer.line.get(lexer.letter.size() - 2)));
         else if (!lexer.letter.get(lexer.letter.size() - 1).equals("s") && !lexer.text.get(lexer.letter.size() - 1).equals("}"))
-            errors.errors(1, lexer.line.get(lexer.letter.size() - 1));
+            ui.console.write(Errors.getErrors(1, lexer.line.get(lexer.letter.size() - 1)));
         else {
             poliz.toPoliz("END");
             return true;
@@ -128,7 +133,7 @@ public class Syntax {
         if (!lexer.text.get(index - 2).equals("for")) {
             for (String name : varName) {
                 if (name.equals(lexer.text.get(index + 1)))
-                    errors.errors(25, lexer.line.get(index + 1));
+                    ui.console.write(Errors.getErrors(25, lexer.line.get(index + 1)));
             }
         } else {
             if (!poliz.get(poliz.getSize() - 2).contains("=")) {
@@ -156,7 +161,7 @@ public class Syntax {
         s += lexer.text.get(i);
 
         if (s.charAt(s.length() - 1) != ';')
-            errors.errors(4, lexer.line.get(index));
+            ui.console.write(Errors.getErrors(4, lexer.line.get(index)));
 
         if (s.indexOf('=') != -1) {
 
@@ -198,7 +203,7 @@ public class Syntax {
                 String[] temp = tmp.replaceAll(" ", "").split("=");
 
                 if (temp[0].length() >= 2)
-                    errors.errors(3, lexer.line.get(index));
+                    ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
                 else if (!temp[1].matches("\\d{1,}")) {
                     int ind = varName.indexOf(lexer.text.get(index + 3));
                     if (ind != -1) {
@@ -212,7 +217,7 @@ public class Syntax {
                             poliz.toPoliz("=");
                             poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
                         } else
-                            errors.errors(7, lexer.line.get(index));
+                            ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
                     }
                 } else {
                     varName.add(temp[0]);
@@ -236,7 +241,7 @@ public class Syntax {
             String[] temp = tmp.split(" ");
 
             if (temp[1].length() >= 2)
-                errors.errors(3, lexer.line.get(index));
+                ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
             else {
                 varType.add("int");
                 varName.add(temp[1]);
@@ -254,7 +259,7 @@ public class Syntax {
         if (!lexer.text.get(index - 2).equals("for")) {
             for (String name : varName) {
                 if (name.equals(lexer.text.get(index + 1)))
-                    errors.errors(25, lexer.line.get(index + 1));
+                    ui.console.write(Errors.getErrors(25, lexer.line.get(index + 1)));
             }
         }else {
             poliz.toPoliz("T" + lexer.text.get(index + 1));
@@ -279,7 +284,7 @@ public class Syntax {
         s += lexer.text.get(i);
 
         if (s.charAt(s.length() - 1) != ';')
-            errors.errors(4, lexer.line.get(index));
+            ui.console.write(Errors.getErrors(4, lexer.line.get(index)));
 
         if (s.indexOf('=') != -1) {
 
@@ -321,7 +326,7 @@ public class Syntax {
                 String[] temp = tmp.replaceAll(" ", "").split("=");
 
                 if (temp[0].length() >= 2)
-                    errors.errors(3, lexer.line.get(index));
+                    ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
                 else if (!temp[1].matches("\\d{1,}[.]\\d{1,}")) {
                     int ind = varName.indexOf(lexer.text.get(index + 3));
                     if (ind != -1){
@@ -336,7 +341,7 @@ public class Syntax {
                             poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
                         }
                         else
-                            errors.errors(7, lexer.line.get(index));
+                            ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
                     }
                 }
                 else{
@@ -356,7 +361,7 @@ public class Syntax {
             line = lexer.line.get(index);
             while (!lexer.text.get(i).equals(";")) {
                 if (line != lexer.line.get(i))
-                    errors.errors(4, lexer.line.get(i));
+                    ui.console.write(Errors.getErrors(4, lexer.line.get(i)));
                 tmp += lexer.text.get(i) + " ";
                 i++;
             }
@@ -364,7 +369,7 @@ public class Syntax {
             String[] temp = tmp.split(" ");
 
             if (temp[1].length() >= 2)
-                errors.errors(3, lexer.line.get(index));
+                ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
             else {
                 varType.add("double");
                 varName.add(temp[1]);
@@ -381,7 +386,7 @@ public class Syntax {
     private void checkString(int index){
         for (String item : varName) {
             if (item.equals(lexer.text.get(index + 1)))
-                errors.errors(25, lexer.line.get(index + 1));
+                ui.console.write(Errors.getErrors(25, lexer.line.get(index + 1)));
         }
 
         String s = "";
@@ -397,7 +402,7 @@ public class Syntax {
         s += lexer.text.get(i);
 
         if (s.charAt(s.length() - 1) != ';')
-            errors.errors(4, lexer.line.get(index));
+            ui.console.write(Errors.getErrors(4, lexer.line.get(index)));
 
         if (s.indexOf('=') != -1) {
 
@@ -413,7 +418,7 @@ public class Syntax {
                 if (!value.contains("cin")){
 
                     if (!lexer.text.get(index + 3).equals("\"") || !lexer.text.get(index + 5).equals("\""))
-                        errors.errors(5, lexer.line.get(index));
+                        ui.console.write(Errors.getErrors(5, lexer.line.get(index)));
 
                     varName.add(lexer.text.get(index + 1));
                     varType.add("string");
@@ -438,7 +443,7 @@ public class Syntax {
             }
             else {
                 if (lexer.text.get(index + 1).length() >= 2)
-                    errors.errors(3, lexer.line.get(index));
+                    ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
                 else if (!lexer.text.get(index + 3).equals("\"") && lexer.text.get(index + 3).matches("\\w")) {
                     int ind = varName.indexOf(lexer.text.get(index + 3));
                     if (ind != -1){
@@ -453,7 +458,7 @@ public class Syntax {
                             poliz.toPoliz("S" + varValue.get(varValue.size() - 1).toString());
                         }
                         else
-                            errors.errors(7, lexer.line.get(index));
+                            ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
                     }
                 }
                 else{
@@ -473,7 +478,7 @@ public class Syntax {
             line = lexer.line.get(index);
             while (!lexer.text.get(i).equals(";")) {
                 if (line != lexer.line.get(i))
-                    errors.errors(4, lexer.line.get(i));
+                    ui.console.write(Errors.getErrors(4, lexer.line.get(i)));
                 tmp += lexer.text.get(i) + " ";
                 i++;
             }
@@ -481,7 +486,7 @@ public class Syntax {
             String[] temp = tmp.split(" ");
 
             if (temp[1].length() >= 2)
-                errors.errors(3, lexer.line.get(index));
+                ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
             else {
                 varType.add("string");
                 varName.add(temp[1]);
@@ -498,7 +503,7 @@ public class Syntax {
     private void checkFor(int index) {
         poliz.toPoliz("!FOR");
         if (!lexer.text.get(index + 1).equals("(") && !lexer.letter.get(index + 1).equals("s"))
-            errors.errors(8, lexer.line.get(index + 1));
+            ui.console.write(Errors.getErrors(8, lexer.line.get(index + 1)));
 
         if ((lexer.text.get(index + 2).equals("int") || lexer.text.get(index + 2).equals("double"))
                 && (lexer.letter.get(index + 2).equals("n") || lexer.letter.get(index + 2).equals("d"))) {
@@ -509,25 +514,25 @@ public class Syntax {
                 checkDouble(index + 2);
 
             if (!lexer.text.get(index + 6).equals(";") && !lexer.letter.get(index + 6).equals("s"))
-                errors.errors(10, lexer.line.get(index + 6));
+                ui.console.write(Errors.getErrors(10, lexer.line.get(index + 6)));
 
             int i = varName.indexOf(lexer.text.get(index + 7));
             int j = varName.indexOf(lexer.text.get(index + 9));
 
             if (i == -1)
                 if (j == -1)
-                    errors.errors(6, lexer.line.get(index + 9));
+                    ui.console.write(Errors.getErrors(6, lexer.line.get(index + 9)));
 
             String operators = "> < == <= >= !=";
             if (!operators.contains(lexer.text.get(index + 8)))
-                errors.errors(11, lexer.line.get(index + 8));
+                ui.console.write(Errors.getErrors(11, lexer.line.get(index + 8)));
 
             poliz.toPoliz(lexer.text.get(index + 7));
             poliz.toPoliz(lexer.text.get(index + 8));
             poliz.toPoliz(lexer.text.get(index + 9));
 
             if (!lexer.text.get(index + 10).equals(";") && !lexer.letter.get(index + 10).equals("s"))
-                errors.errors(8, lexer.line.get(index + 10));
+                ui.console.write(Errors.getErrors(8, lexer.line.get(index + 10)));
 
             i = varName.indexOf(lexer.text.get(index + 11));
             j = varName.indexOf(lexer.text.get(index + 13));
@@ -536,19 +541,19 @@ public class Syntax {
             if (i == -1) {
                 if (j == -1) {
                     if (k == -1) {
-                        errors.errors(8, lexer.line.get(index + 11));
+                        ui.console.write(Errors.getErrors(8, lexer.line.get(index + 11)));
                     }
                 }
             }
 
             operators = "+ - * /";
             if (!lexer.text.get(index + 12).equals("="))
-                errors.errors(8, lexer.line.get(index + 12));
+                ui.console.write(Errors.getErrors(8, lexer.line.get(index + 12)));
             else if (!operators.contains(lexer.text.get(index + 14)))
-                errors.errors(8, lexer.line.get(index + 14));
+                ui.console.write(Errors.getErrors(8, lexer.line.get(index + 14)));
 
             if (!lexer.text.get(index + 16).equals(")") && !lexer.letter.get(index + 16).equals("s"))
-                errors.errors(8, lexer.line.get(index + 16));
+                ui.console.write(Errors.getErrors(8, lexer.line.get(index + 16)));
 
             poliz.toPoliz(lexer.text.get(index + 11));
             poliz.toPoliz(lexer.text.get(index + 13));
@@ -557,7 +562,7 @@ public class Syntax {
             poliz.toPoliz(lexer.text.get(index + 12));
 
             if (!lexer.text.get(index + 17).equals("{") && !lexer.letter.get(index + 17).equals("s"))
-                errors.errors(12, lexer.line.get(index + 17));
+                ui.console.write(Errors.getErrors(12, lexer.line.get(index + 17)));
 
 
             boolean notEnd = true;
@@ -587,7 +592,7 @@ public class Syntax {
             }
 
             if (notEnd)
-                errors.errors(13, lexer.line.get(index + 16));
+                ui.console.write(Errors.getErrors(13, lexer.line.get(index + 16)));
 
             varName.remove(varName.size() - 1);
             varType.remove(varType.size() - 1);
@@ -602,18 +607,18 @@ public class Syntax {
                 poliz.toPoliz(lexer.text.get(index + 3));
 
                 if (!lexer.text.get(index + 5).equals(";") && !lexer.letter.get(index + 5).equals("s"))
-                    errors.errors(10, lexer.line.get(index + 5));
+                    ui.console.write(Errors.getErrors(10, lexer.line.get(index + 5)));
 
                 String operators = "> < == <= >= !=";
                 if (!operators.contains(lexer.text.get(index + 7)))
-                    errors.errors(11, lexer.line.get(index + 7));
+                    ui.console.write(Errors.getErrors(11, lexer.line.get(index + 7)));
 
                 poliz.toPoliz(lexer.text.get(index + 6));
                 poliz.toPoliz(lexer.text.get(index + 7));
                 poliz.toPoliz(lexer.text.get(index + 8));
 
                 if (!lexer.text.get(index + 9).equals(";") && !lexer.letter.get(index + 9).equals("s"))
-                    errors.errors(8, lexer.line.get(index + 9));
+                    ui.console.write(Errors.getErrors(8, lexer.line.get(index + 9)));
 
                 i = varName.indexOf(lexer.text.get(index + 10));
                 int j = varName.indexOf(lexer.text.get(index + 12));
@@ -622,19 +627,19 @@ public class Syntax {
                 if (i == -1) {
                     if (j == -1) {
                         if (k == -1) {
-                            errors.errors(8, lexer.line.get(index + 10));
+                            ui.console.write(Errors.getErrors(8, lexer.line.get(index + 10)));
                         }
                     }
                 }
 
                 operators = "+ - * /";
                 if (!lexer.text.get(index + 11).equals("="))
-                    errors.errors(8, lexer.line.get(index + 11));
+                    ui.console.write(Errors.getErrors(8, lexer.line.get(index + 11)));
                 else if (!operators.contains(lexer.text.get(index + 13)))
-                    errors.errors(8, lexer.line.get(index + 13));
+                    ui.console.write(Errors.getErrors(8, lexer.line.get(index + 13)));
 
                 if (!lexer.text.get(index + 15).equals(")") && !lexer.letter.get(index + 15).equals("s"))
-                    errors.errors(8, lexer.line.get(index + 15));
+                    ui.console.write(Errors.getErrors(8, lexer.line.get(index + 15)));
 
                 poliz.toPoliz(lexer.text.get(index + 10));
                 poliz.toPoliz(lexer.text.get(index + 12));
@@ -643,7 +648,7 @@ public class Syntax {
                 poliz.toPoliz(lexer.text.get(index + 11));
 
                 if (!lexer.text.get(index + 16).equals("{") && !lexer.letter.get(index + 16).equals("s"))
-                    errors.errors(12, lexer.line.get(index + 16));
+                    ui.console.write(Errors.getErrors(12, lexer.line.get(index + 16)));
 
 
                 boolean notEnd = true;
@@ -673,18 +678,18 @@ public class Syntax {
                 }
 
                 if (notEnd)
-                    errors.errors(13, lexer.line.get(index + 15));
+                    ui.console.write(Errors.getErrors(13, lexer.line.get(index + 15)));
             } else
-                errors.errors(9, lexer.line.get(index + 2));
+                ui.console.write(Errors.getErrors(9, lexer.line.get(index + 2)));
         }
     }
 
     private void checkIf(int index) {
         if (!lexer.text.get(index).equals("if") && !lexer.letter.get(index).equals("k"))
-            errors.errors(14, lexer.line.get(index));
+            ui.console.write(Errors.getErrors(14, lexer.line.get(index)));
         else {
             if (!lexer.text.get(index + 1).equals("(") && !lexer.letter.get(index + 1).equals("s"))
-                errors.errors(14, lexer.line.get(index + 1));
+                ui.console.write(Errors.getErrors(14, lexer.line.get(index + 1)));
 
             int line = lexer.line.get(index + 1);
             int i = index + 2;
@@ -692,7 +697,7 @@ public class Syntax {
 
             while (!lexer.text.get(i).equals(")")) {
                 if (lexer.line.get(i) != line)
-                    errors.errors(14, lexer.line.get(i));
+                    ui.console.write(Errors.getErrors(14, lexer.line.get(i)));
                 expression += lexer.text.get(i) + " ";
                 i++;
             }
@@ -700,7 +705,7 @@ public class Syntax {
             logical(expression, lexer.line.get(i));
 
             if (!lexer.text.get(i).equals("{") && !lexer.letter.get(i).equals("s"))
-                errors.errors(15, lexer.line.get(i));
+                ui.console.write(Errors.getErrors(15, lexer.line.get(i)));
 
             boolean notEnd = true;
             line = 0;
@@ -730,11 +735,11 @@ first:
             }
 
             if (notEnd)
-                errors.errors(16, lexer.line.get(line));
+                ui.console.write(Errors.getErrors(16, lexer.line.get(line)));
 
             if (lexer.text.get(j + 1).equals("else")) {
                 if (!lexer.text.get(j + 2).equals("{"))
-                    errors.errors(18, lexer.line.get(j + 2));
+                    ui.console.write(Errors.getErrors(18, lexer.line.get(j + 2)));
 
                 notEnd = true;
                 line = 0;
@@ -763,27 +768,27 @@ first:
                     }
                 }
                 if (notEnd)
-                    errors.errors(19, lexer.line.get(line));
+                    ui.console.write(Errors.getErrors(19, lexer.line.get(line)));
             }
         }
     }
 
     private void checkCout(int index) {
         if (!lexer.text.get(index).equals("cout") || !lexer.letter.get(index).equals("k"))
-            errors.errors(20, lexer.line.get(index));
+            ui.console.write(Errors.getErrors(20, lexer.line.get(index)));
 
         if (!lexer.text.get(index + 1).equals("("))
-            errors.errors(20, lexer.line.get(index));
+            ui.console.write(Errors.getErrors(20, lexer.line.get(index)));
 
         if (lexer.text.get(index + 2).equals("\"")) {
             if (!lexer.letter.get(index + 3).equals("i"))
-                errors.errors(20, lexer.line.get(index + 3));
+                ui.console.write(Errors.getErrors(20, lexer.line.get(index + 3)));
             else if (!lexer.text.get(index + 4).equals("\""))
-                errors.errors(5, lexer.line.get(index + 4));
+                ui.console.write(Errors.getErrors(5, lexer.line.get(index + 4)));
             else if (!lexer.text.get(index + 5).equals(")"))
-                errors.errors(20, lexer.line.get(index + 5));
+                ui.console.write(Errors.getErrors(20, lexer.line.get(index + 5)));
             else if (!lexer.text.get(index + 6).equals(";"))
-                errors.errors(4, lexer.line.get(index + 6));
+                ui.console.write(Errors.getErrors(4, lexer.line.get(index + 6)));
 
             poliz.toPoliz("W");
             poliz.toPoliz(lexer.text.get(index + 3));
@@ -793,7 +798,7 @@ first:
             int line = lexer.line.get(index + 2);
             while (!lexer.text.get(i).equals(")")) {
                 if (line != lexer.line.get(i))
-                    errors.errors(20, line);
+                    ui.console.write(Errors.getErrors(20, line));
                 cout += lexer.text.get(i);
                 i++;
             }
@@ -810,9 +815,9 @@ first:
                     }
                 }
                 if (!isVar)
-                    errors.errors(6, lexer.line.get(index + 2));
+                    ui.console.write(Errors.getErrors(6, lexer.line.get(index + 2)));
                 if (!lexer.text.get(i + 1).equals(";"))
-                    errors.errors(10, line);
+                    ui.console.write(Errors.getErrors(10, line));
                 poliz.toPoliz("W");
                 poliz.toPoliz(lexer.text.get(i-1));
             }
@@ -821,18 +826,18 @@ first:
 
     private void checkCin(int index){
             if (!lexer.text.get(index).equals("cin") && !lexer.letter.get(index).equals("k"))
-                errors.errors(21, lexer.line.get(index));
+                ui.console.write(Errors.getErrors(21, lexer.line.get(index)));
             else if (!lexer.text.get(index + 1).equals("(") && !lexer.letter.get(index + 1).equals("s"))
-                errors.errors(21, lexer.line.get(index + 1));
+                ui.console.write(Errors.getErrors(21, lexer.line.get(index + 1)));
             else if (!lexer.text.get(index + 2).equals(")") && !lexer.letter.get(index + 2).equals("s"))
-                errors.errors(21, lexer.line.get(index + 2));
+                ui.console.write(Errors.getErrors(21, lexer.line.get(index + 2)));
             else if (!lexer.text.get(index + 3).equals(";") && !lexer.letter.get(index + 3).equals("s"))
-                errors.errors(4, lexer.line.get(index + 3));
+                ui.console.write(Errors.getErrors(4, lexer.line.get(index + 3)));
     }
 
     private int checkLabel(int index){
         if (!lexer.letter.get(index - 1).equals("i"))
-            errors.errors(22, lexer.line.get(index));
+            ui.console.write(Errors.getErrors(22, lexer.line.get(index)));
         else if (labels.size() == 0) {
             labels.add(lexer.text.get(index - 1));
             poliz.toPoliz("L" + labels.get(labels.size() - 1));
@@ -841,7 +846,7 @@ first:
         else {
             for (String label: labels) {
                 if (label.equals(lexer.text.get(index - 1)))
-                    errors.errors(23, lexer.line.get(index - 1));
+                    ui.console.write(Errors.getErrors(23, lexer.line.get(index - 1)));
             }
             labels.add(lexer.text.get(index - 1));
             poliz.toPoliz("L" + labels.get(labels.size() - 1));
@@ -858,9 +863,9 @@ first:
                 break;
             }
         if (!isReal)
-            errors.errors(24, lexer.line.get(index + 1));
+            ui.console.write(Errors.getErrors(24, lexer.line.get(index + 1)));
         else if (!lexer.text.get(index + 2).equals(";"))
-            errors.errors(4, lexer.line.get(index + 2));
+            ui.console.write(Errors.getErrors(4, lexer.line.get(index + 2)));
 
         poliz.toPoliz("G" + lexer.text.get(index + 1));
     }
@@ -953,7 +958,7 @@ first:
         for (String s : tokens) {
             if (s.matches("\\w{1,}") && !s.matches("\\d{1,}[.]\\d{1,}|\\d{1,}")){
                 if (s.length() >= 2)
-                    errors.errors(3, line);
+                    ui.console.write(Errors.getErrors(3, line));
                 boolean isReal = false;
                 for (String var: varName) {
                     if (var.equals(s)) {
@@ -962,7 +967,7 @@ first:
                     }
                 }
                 if (!isReal)
-                    errors.errors(6, line);
+                    ui.console.write(Errors.getErrors(6, line));
             }
         }
 
@@ -988,7 +993,7 @@ first:
                 isFine = true;
         }
         if (!isFine)
-            errors.errors(17, line);
+            ui.console.write(Errors.getErrors(17, line));
 
         return true;
     }

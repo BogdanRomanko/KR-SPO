@@ -165,7 +165,7 @@ public class Interpreter {
 
     private void print(int index){
         String print = poliz.get(index + 1).split(" - ")[0];
-        ui.console.write("[INTERPRETER] - print:" + print);
+        ui.console.write("[INTERPRETER] - print: " + print);
         count += 1;
     }
 

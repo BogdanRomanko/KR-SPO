@@ -23,7 +23,10 @@ public class Lexer {
 
     private int LineId = 0;
 
-    public Lexer(String program) {
+    private UI ui;
+
+    public Lexer(String program, UI ui) {
+        this.ui = ui;
 
         letter = new Stack<>();
         position = new Stack<>();
@@ -71,10 +74,14 @@ public class Lexer {
                             } else {
                                 isStr = false;
                                 checkOther(buffer);
-                                System.out.println("[IDENTIFIER] - " + buffer);
 
-                                if (checkSeparators(String.valueOf(tempLines[j])))
+                                System.out.println("[IDENTIFIER] - " + buffer);
+                                ui.lexerArea.setText(ui.lexerArea.getText() + "[IDENTIFIER] - " + buffer + "\n");
+
+                                if (checkSeparators(String.valueOf(tempLines[j]))) {
                                     System.out.println("[SEPARATOR] - " + tempLines[j]);
+                                    ui.lexerArea.setText(ui.lexerArea.getText() + "[SEPARATOR] - " + tempLines[j] + "\n");
+                                }
 
                                 buffer = "";
                                 break second;
@@ -84,14 +91,17 @@ public class Lexer {
                         int comm = checkComments(tempLines[j], second);
                         if (comm == 1) {
                             System.out.println("[COMMENT LINE] - " + tempLines[j] + second);
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[COMMENT LINE] - " + tempLines[j] + second + "\n");
                             break;
                         } else if (comm == 2) {
                             System.out.println("[COMMENT START] - " + tempLines[j] + second);
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[COMMENT START] - " + tempLines[j] + second + "\n");
                             buffer = "";
                             j += 2;
                             isComm = true;
                         } else if (comm == 3) {
                             System.out.println("[COMMENT END] - " + tempLines[j] + second);
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[COMMENT END] - " + tempLines[j] + second + "\n");
                             j += 2;
                             isComm = false;
                             buffer = "";
@@ -102,26 +112,41 @@ public class Lexer {
                             break second;
 
                         int type = checkType(buffer);
-                        if (checkKeyWords(buffer))
+                        if (checkKeyWords(buffer)) {
                             System.out.println("[KEYWORD] - " + buffer);
-                        else if (type == 1)
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[KEYWORD] - " + buffer + "\n");
+                        }
+                        else if (type == 1){
                             System.out.println("[INTEGER] - " + buffer);
-                        else if (type == 2)
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[INTEGER] - " + buffer + "\n");
+                        }
+                        else if (type == 2){
                             System.out.println("[DOUBLE] - " + buffer);
-                        else if (type == 3)
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[DOUBLE] - " + buffer + "\n");
+                        }
+                        else if (type == 3) {
                             System.out.println("[STRING] - " + buffer);
-                        else if (checkOther(buffer) == 2)
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[STRING] - " + buffer + "\n");
+                        }
+                        else if (checkOther(buffer) == 2) {
                             System.out.println("[IDENTIFIER] - " + buffer);
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[IDENTIFIER] - " + buffer + "\n");
+                        }
 
                         int oper = checkOperators(tempLines[j], second);
                         if (oper == 2) {
                             System.out.println("[OPERATOR] - " + tempLines[j] + second);
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[OPERATOR] - " + tempLines[j] + second + "\n");
                             buffer = "";
                             break second;
-                        } else if (oper == 1)
+                        } else if (oper == 1) {
                             System.out.println("[OPERATOR] - " + tempLines[j]);
-                        else if (checkSeparators(String.valueOf(tempLines[j])))
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[OPERATOR] - " + tempLines[j] + "\n");
+                        }
+                        else if (checkSeparators(String.valueOf(tempLines[j]))) {
                             System.out.println("[SEPARATOR] - " + tempLines[j]);
+                            ui.lexerArea.setText(ui.lexerArea.getText() + "[SEPARATOR] - " + tempLines[j] + "\n");
+                        }
 
                         if (tempLines[j] == '"')
                             isStr = true;
@@ -134,11 +159,10 @@ public class Lexer {
 
         }
 
-        /*for (int i = 0; i < letter.size(); i++)
-            System.out.println(text.get(i) + " " + letter.get(i) + " " + position.get(i));
 
         for (int i = 0; i < letter.size(); i++)
-            System.out.print(letter.get(i) + position.get(i) + " ");*/
+            ui.lexerTableArea.setText(ui.lexerTableArea.getText() + text.get(i) + "\t" + letter.get(i) + "\t" + position.get(i) + "\n");
+
 
         System.out.println();
         System.out.println();

@@ -18,6 +18,9 @@ public class UI extends JFrame {
     private JInternalFrame poliz;
 
     public Console console;
+    public JTextArea lexerArea = new JTextArea();
+    public JTextArea lexerTableArea = new JTextArea();
+    public JTextArea polizArea = new JTextArea();
 
     private JTextArea editorTextArea;
 
@@ -193,7 +196,7 @@ public class UI extends JFrame {
     /*
      * Метод, возвращающий окно текстового редактора
      */
-    private JInternalFrame getEditorFrame(){
+    private JInternalFrame getEditorFrame() {
         editor = new JInternalFrame("Текстовый редактор", true, true, true, true);
         editor.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         editor.setSize(500, 350);
@@ -207,8 +210,8 @@ public class UI extends JFrame {
         editorTextArea = new JTextArea();
         JScrollPane pane1 = new JScrollPane(editorTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         pane1.setRowHeaderView(new TextLineNumber(editorTextArea));
-        pane1.setPreferredSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.75)));
-        pane1.setSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.75)));
+        pane1.setPreferredSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.75)));
+        pane1.setSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.75)));
         editor.add(pane1, BorderLayout.CENTER);
 
         /*
@@ -216,8 +219,8 @@ public class UI extends JFrame {
          */
         console = new Console();
         JScrollPane pane2 = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        pane2.setPreferredSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.35)));
-        pane2.setSize(new Dimension(200, (int) Math. round(editor.getSize().height*0.35)));
+        pane2.setPreferredSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
+        pane2.setSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
 
         JPanel bottom = new JPanel();
         bottom.setLayout(new BorderLayout());
@@ -232,10 +235,17 @@ public class UI extends JFrame {
         buttonRun.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Lexer lexer = new Lexer(editorTextArea.getText());
-                Syntax syntax = new Syntax(lexer);
-                Interpreter interpreter = new Interpreter(syntax.getPoliz(), UI.this);
-                interpreter.start();
+                console.clear();
+                lexerArea.setText("");
+                lexerTableArea.setText("");
+                polizArea.setText("");
+                Lexer lexer = new Lexer(editorTextArea.getText(), UI.this);
+                Syntax syntax = new Syntax(lexer, UI.this);
+
+                if (!Errors.isErrors()) {
+                    Interpreter interpreter = new Interpreter(syntax.getPoliz(), UI.this);
+                    interpreter.start();
+                }
             }
         });
 
@@ -256,6 +266,9 @@ public class UI extends JFrame {
 
         lexer.addInternalFrameListener(viewAndHideLexer());
 
+        JScrollPane pane = new JScrollPane(lexerArea);
+        lexer.add(pane);
+
         return lexer;
     }
 
@@ -270,6 +283,9 @@ public class UI extends JFrame {
 
         lexerTable.addInternalFrameListener(viewAndHideLexerTable());
 
+        JScrollPane pane = new JScrollPane(lexerTableArea);
+        lexerTable.add(pane);
+
         return lexerTable;
     }
 
@@ -283,6 +299,9 @@ public class UI extends JFrame {
         poliz.setMinimumSize(new Dimension(450, 500));
 
         poliz.addInternalFrameListener(viewAndHidePoliz());
+
+        JScrollPane pane = new JScrollPane(polizArea);
+        poliz.add(pane);
 
         return poliz;
     }

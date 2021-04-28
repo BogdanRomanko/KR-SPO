@@ -31,6 +31,10 @@ public class Console extends JTextArea {
         removeKeyListener(readAction());
     }
 
+    public void clear(){
+        setText("");
+    }
+
     private KeyListener readAction(){
         return new KeyAdapter() {
             @Override
