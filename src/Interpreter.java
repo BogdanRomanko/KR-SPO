@@ -84,11 +84,13 @@ public class Interpreter {
             //если значение переменной необходимо считать с консоли
             else {
                 ui.console.write("[INTERPRETER] READ:");
-                int temp1 = Integer.parseInt(ui.console.read());
+                ui.console.read();
+                String read = "";
+                int temp1 = Integer.parseInt(read);
                 int temp = scanner.nextInt();
                 ui.console.deleteListener();
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(temp1);
+                varValue.add(temp);
                 varType.add("int");
                 ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
@@ -125,8 +127,12 @@ public class Interpreter {
             //если значение переменной необходимо считать с консоли
             else {
                 ui.console.write("[INTERPRETER] READ:");
+                ui.console.read();
+                String read = "";
+                while (ui.console.getUsersText() == "")
+                    read= ui.console.getUsersText();
                 double temp = scanner.nextDouble();
-                double temp1 = Double.parseDouble(ui.console.read());
+                double temp1 = Double.parseDouble(read);
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(temp);
                 varType.add("double");

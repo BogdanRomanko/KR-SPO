@@ -1,5 +1,11 @@
+/*
+ * Класс для работы с ошибками компилятора
+ */
 public class Errors {
 
+    /*
+     * Массив, хранящий в себе все коды ошибок
+     */
     private static String[] errors = {
             "Ошибка описания входной точки программы",  //0
             "Ошибка закрытия входной точки программы",  //1
@@ -32,27 +38,46 @@ public class Errors {
             ""
     };
 
+    /*
+     * Счётчик количества ошибок
+     */
     private static int count = 0;
 
+    /*
+     * Метод, печатающий ошибку, строку с ошибой и завершающий работу приложения
+     */
     public static void errors(int error, int line) {
         System.out.println("[ОШИБКА] - " + errors[error] + "\nСтрока " + (line + 1));
         System.exit(1);
     }
 
+    /*
+     * Метод, печатающий ошибку и завершающий работу приложения
+     */
     public static void errors(int error) {
         System.out.println("[ОШИБКА] - " + errors[error]);
         System.exit(1);
     }
 
+    /*
+     * Метод, увеличивающий счётчик ошибок и возвращающий
+     * ошибку, строку с ошибкой
+     */
     public static String getErrors(int error, int line){
         count++;
         return "[ОШИБКА] - " + errors[error] + "\nСтрока " + (line + 1);
     }
 
+    /*
+     * Метод проверки есть ли хоть одна ошибка
+     */
     public static boolean isErrors(){
         return count != 0;
     }
 
+    /*
+     * Метод, очищающий количество ошибок
+     */
     public static void clearErrors(){
         count = 0;
     }

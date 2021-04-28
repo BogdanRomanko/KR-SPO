@@ -4,6 +4,7 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Date;
 
 
 /*
@@ -25,6 +26,12 @@ public class UI extends JFrame {
     private JTextArea editorTextArea;
 
     /*
+     * Инициализируем строки отображения информации для строки состояния
+     */
+    private final JLabel StatusL = new JLabel("Статус");
+    private final JLabel StatusTime = new JLabel("");
+
+    /*
      * Констуктор создания визуального интерфейса пользователя
      */
     public UI(){
@@ -42,11 +49,24 @@ public class UI extends JFrame {
         setJMenuBar(getMenu());
 
         /*
+         * Устанавливаем панель инструментов для главного окна
+         */
+        add(getToolBar(), BorderLayout.NORTH);
+
+        /*
+         * Устанавливаем строку состояния
+         */
+        add(getStatusBar(), BorderLayout.SOUTH);
+
+        /*
          * Делаем главное окно MDI
          */
         JDesktopPane desktopPane = new JDesktopPane();
         add(desktopPane);
 
+        /*
+         * Добавим дочерние окна
+         */
         desktopPane.add(getEditorFrame());
         desktopPane.add(getLexerFrame());
         desktopPane.add(getLexerTable());
@@ -191,6 +211,66 @@ public class UI extends JFrame {
         menuBar.add(about);
 
         return menuBar;
+    }
+
+    /*
+     * Возвращает строку состояния для главного окна
+     */
+    private JPanel getStatusBar(){
+        /*
+         * Создание строки состояния с описанием состояния
+         * и временем/датой. Создадим панель, куда добавим две текстовые
+         * метки с датой/временем и названием открытого файла
+         */
+        JPanel StatusP = new JPanel();
+
+        StatusP.setLayout(new BorderLayout());
+        StatusP.add(StatusL,BorderLayout.WEST);
+        StatusP.setPreferredSize(new Dimension(this.getWidth(),20));
+        StatusP.setBorder(BorderFactory.createLineBorder(Color.black));
+        StatusP.add(StatusTime,BorderLayout.EAST);
+
+        /*
+         * Создание таймера для ежесекундного обновления
+         * даты/времени в строке состояния и его запуск
+         */
+        final Timer timer = new Timer( 100, this.timer);
+        timer.start();
+
+        return StatusP;
+    }
+
+    /*
+     * Метод, возвращающий панель инструментов
+     */
+    private JToolBar getToolBar(){
+        JToolBar toolBar = new JToolBar();
+
+        /*
+         * массив с кнопками для панели инструментов
+         */
+        final JButton[] buttons = {
+                new JButton("Новый"),
+                new JButton("Открыть"),
+                new JButton("Сохранить"),
+                new JButton("Показать текстовый редактор"),
+                new JButton("Скрыть текстовый редактор")
+        };
+
+        // слушатель для массива с кнопками соотвественно предназначению кнопок
+        final ActionListener[] listeners = {newFileAction(), openFileAction(), saveFileAction(), viewEditor(), hideEditor()};
+
+        // проходим по всем кнопкам панели инструментов
+        for (int i = 0; i < buttons.length; i++) {
+            // добавляем кнопке соотвествующий ей слушатель
+            buttons[i].addActionListener(listeners[i]);
+            // добавляем кнопку в панель инструментов
+            toolBar.add(buttons[i]);
+        }
+
+        buttons[4].setVisible(false);
+
+        return toolBar;
     }
 
     /*
@@ -346,8 +426,10 @@ public class UI extends JFrame {
                         return "Файлы Small C++ (*.scpp)";
                     }
                 });
-                if (fileChooser.showOpenDialog(UI.this) == JFileChooser.APPROVE_OPTION)
+                if (fileChooser.showOpenDialog(UI.this) == JFileChooser.APPROVE_OPTION) {
                     fileName = fileChooser.getSelectedFile().getPath();
+                    StatusL.setText(fileName);
+                }
                 else
                     JOptionPane.showMessageDialog(UI.this, "Неверно выбранный файл", "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
@@ -440,6 +522,7 @@ public class UI extends JFrame {
 
                         file.createNewFile();
                         fileName = file.getPath();
+                        StatusL.setText(fileName);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(UI.this, "Ошибка при создании файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
                     }
@@ -462,6 +545,8 @@ public class UI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(false);
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(true);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(3)).setVisible(false);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(4)).setVisible(true);
                 editor.setVisible(true);
             }
         };
@@ -476,6 +561,8 @@ public class UI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(true);
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(false);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(3)).setVisible(true);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(4)).setVisible(false);
                 editor.setVisible(false);
             }
         };
@@ -490,12 +577,16 @@ public class UI extends JFrame {
             public void internalFrameOpened(InternalFrameEvent e) {
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(false);
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(true);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(3)).setVisible(false);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(4)).setVisible(true);
             }
 
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(0).setVisible(true);
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(0)).getItem(1).setVisible(false);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(3)).setVisible(true);
+                (((JToolBar) UI.this.getContentPane().getComponents()[0]).getComponent(4)).setVisible(false);
             }
         };
     }
@@ -640,5 +731,19 @@ public class UI extends JFrame {
             }
         };
     }
+
+    /*
+     * Слушатель для таймера, изменяющий дату и время в строке состояния
+     */
+    private ActionListener timer = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            /*
+             * Получаем дату и устанавливаем её в текстовую метку панели состояния
+             */
+            Date date = new Date();
+            StatusTime.setText(date.toString());
+        }
+    };
 
 }
