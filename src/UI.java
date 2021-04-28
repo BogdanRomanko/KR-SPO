@@ -198,10 +198,15 @@ public class UI extends JFrame {
         editor.setMinimumSize(new Dimension(500, 350));
         editor.addInternalFrameListener(viewAndHideEditor());
 
+        /*
+         * Добавляем текстовый редактор с подсчётом строк
+         */
         editorTextArea = new JTextArea();
         JScrollPane pane1 = new JScrollPane(editorTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         pane1.setRowHeaderView(new TextLineNumber(editorTextArea));
-        editor.add(pane1);
+        editor.add(pane1, BorderLayout.NORTH);
+
+
 
         return editor;
     }
@@ -370,20 +375,27 @@ public class UI extends JFrame {
                         return "Файлы Small C++ (*.scpp)";
                     }
                 });
-                if (fileChooser.showSaveDialog(UI.this) == JFileChooser.APPROVE_OPTION)
+                if (fileChooser.showSaveDialog(UI.this) == JFileChooser.APPROVE_OPTION) {
+                    /*
+                     * Создаём файл с выбранным пользователем именем
+                     * и добавляем расширение .scpp, если такого нет
+                     */
+                    File file = new File(fileChooser.getSelectedFile().getPath());
+                    try {
+                        if (!file.getName().endsWith(".scpp"))
+                            file = new File(file.getPath() + ".scpp");
+
+                        file.createNewFile();
+                        fileName = file.getPath();
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(UI.this, "Ошибка при создании файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    }
+
                     JOptionPane.showMessageDialog(UI.this, "Файл успешно создан", "Новый файл", JOptionPane.INFORMATION_MESSAGE);
+                }
                 else
                     JOptionPane.showMessageDialog(UI.this, "Ошибка при создании файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
-                File file = new File(fileChooser.getSelectedFile().getPath());
-                try {
 
-                    if (!file.getName().endsWith(".scpp"))
-                        file = new File(file.getPath() + ".scpp");
-
-                    file.createNewFile();
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(UI.this, "Ошибка при создании файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }
             }
         };
     }
