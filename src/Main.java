@@ -1,8 +1,15 @@
+import sun.awt.SunToolkit;
+
+import javax.swing.*;
+
 public class Main {
 
     public static void main(String[] args) {
-        Lexer lexer;
-
-        UI ui = new UI();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new UI();
+            }
+        });
     }
 }

@@ -72,6 +72,10 @@ public class UI extends JFrame {
         desktopPane.add(getLexerTable());
         desktopPane.add(getPolizFrame());
 
+        TextAreaStreamer ts = new TextAreaStreamer(console);
+        console.addKeyListener(ts);
+        System.setIn(ts);
+
         setVisible(true);
     }
 
@@ -164,6 +168,8 @@ public class UI extends JFrame {
         hideLexer.addActionListener(hideLexer());
         hideLexerTable.addActionListener(hideLexerTable());
         hidePoliz.addActionListener(hidePoliz());
+
+        mExamples[0].addActionListener(viewExample1());
 
         /*
          * Добавляем все подпункты в пункты меню
@@ -319,13 +325,10 @@ public class UI extends JFrame {
                 lexerArea.setText("");
                 lexerTableArea.setText("");
                 polizArea.setText("");
-                Lexer lexer = new Lexer(editorTextArea.getText(), UI.this);
-                Syntax syntax = new Syntax(lexer, UI.this);
 
-                if (!Errors.isErrors()) {
-                    Interpreter interpreter = new Interpreter(syntax.getPoliz(), UI.this);
-                    interpreter.start();
-                }
+                InterpreterThread interpreterThread = new InterpreterThread("interpreter", editorTextArea.getText(), UI.this);
+                interpreterThread.start();
+
             }
         });
 
@@ -728,6 +731,26 @@ public class UI extends JFrame {
             public void internalFrameClosing(InternalFrameEvent e) {
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(0).setVisible(true);
                 ((JMenu) UI.this.getJMenuBar().getMenu(1).getItem(5)).getItem(1).setVisible(false);
+            }
+        };
+    }
+
+    /*
+     * Обработчик выбора примера 1 в меню Примеры
+     */
+    private ActionListener viewExample1(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editorTextArea.setText(
+                        "int main(){\n" +
+                        "\n" +
+                        "    int a = 0;\n" +
+                        "    int b = cin();\n" +
+                        "\n" +
+                        "    return 0;\n" +
+                        "}"
+                );
             }
         };
     }

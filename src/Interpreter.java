@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -8,7 +9,7 @@ public class Interpreter {
     private ArrayList<String> varName = new ArrayList <String>();
     private ArrayList<String> varType = new ArrayList <String>();
     private ArrayList<Object> varValue = new ArrayList <Object>();
-    private Scanner scanner = new Scanner(System.in);
+    private Scanner scanner;
     private int count = 0;
 
     private UI ui;
@@ -20,6 +21,8 @@ public class Interpreter {
     public Interpreter(Poliz poliz, UI ui) {
         this.ui = ui;
         this.poliz = poliz;
+
+        scanner = new Scanner(System.in);
     }
 
     /*
@@ -84,11 +87,11 @@ public class Interpreter {
             //если значение переменной необходимо считать с консоли
             else {
                 ui.console.write("[INTERPRETER] READ:");
-                ui.console.read();
-                String read = "";
-                int temp1 = Integer.parseInt(read);
+
+                ui.console.setEditable(true);
                 int temp = scanner.nextInt();
-                ui.console.deleteListener();
+                ui.console.setEditable(false);
+
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(temp);
                 varType.add("int");
@@ -127,12 +130,7 @@ public class Interpreter {
             //если значение переменной необходимо считать с консоли
             else {
                 ui.console.write("[INTERPRETER] READ:");
-                ui.console.read();
-                String read = "";
-                while (ui.console.getUsersText() == "")
-                    read= ui.console.getUsersText();
                 double temp = scanner.nextDouble();
-                double temp1 = Double.parseDouble(read);
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(temp);
                 varType.add("double");

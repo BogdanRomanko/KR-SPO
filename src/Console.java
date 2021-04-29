@@ -38,24 +38,6 @@ public class Console extends JTextArea {
      */
     public void read(){
         setEditable(true);
-        addKeyListener(readAction());
-    }
-
-    private String read(KeyEvent e){
-        String text = "";
-        while (e.getKeyCode() != KeyEvent.VK_ENTER){
-            text += e.getKeyChar();
-        }
-        return text;
-    }
-
-    /*
-     * Метод, удаляющий слушатель для ввода данных в консоль
-     * и делающий её снова закрытой для ввода
-     */
-    public void deleteListener(){
-        setEditable(false);
-        removeKeyListener(readAction());
     }
 
     /*
@@ -63,18 +45,6 @@ public class Console extends JTextArea {
      */
     public void clear(){
         setText("");
-    }
-
-    /*
-     * Слушатель для ввода данных в консоль
-     */
-    private KeyListener readAction(){
-        return new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                usersText = read(e);
-            }
-        };
     }
 
 }
