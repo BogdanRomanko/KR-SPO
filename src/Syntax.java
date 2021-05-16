@@ -1,98 +1,166 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
 
+
+/*
+ * Класс синтакисческого анализатора, принимающий
+ * на вход результат лексического разбора исходной программы
+ */
 public class Syntax {
-
+    /*
+     * Поле, хранящее лексический анализатор для
+     * использования результата его разбора
+     */
     private Lexer lexer;
 
+    /*
+     * Поля для хранения имён переменных, их типов
+     * и значений
+     */
     private ArrayList<String> varName;
     private ArrayList<String> varType;
     private ArrayList<Object> varValue;
 
+    /*
+     * Ассоциативные массивы для корректного записывания
+     * окончание блоков if, else и for в ПОЛИЗ
+     */
     private HashMap<String, Integer> parenthesisFor = new HashMap<>();
     private HashMap<String, Integer> parenthesisIf = new HashMap<>();
     private HashMap<String, Integer> parenthesisElse = new HashMap<>();
 
+    /*
+     * Поле, хранящее названия меток для goto
+     */
     private ArrayList<String> labels;
 
+    /*
+     * Поле, хранящее объект ПОЛИЗа для записи в него
+     */
     private Poliz poliz = new Poliz();
 
+    /*
+     * Поле, хранящее интерфейс пользователя для корректной работы
+     * с нужными элементами пользовательского интерфейса
+     */
     private UI ui;
 
+    private int count = 0;
+
+    /*
+     * Конструктор класса, инициализирующий поля с лексическим
+     * анализатором и интерфейсом пользователя
+     */
     Syntax(Lexer lexer, UI ui) {
         this.lexer = lexer;
         this.ui = ui;
 
+        /*
+         * Очищаем количество ошибок для повторных запусков
+         */
         Errors.clearErrors();
 
-        varName = new ArrayList <String>();
-        varType = new ArrayList <String>();
-        varValue = new ArrayList <Object>();
+        /*
+         * Инициализируем массивы для работы с переменными
+         * исходной программы, а также для названий
+         * и координат меток
+         */
+        varName = new ArrayList<String>();
+        varType = new ArrayList<String>();
+        varValue = new ArrayList<Object>();
 
-        labels = new ArrayList <String>();
+        labels = new ArrayList<String>();
 
         ArrayList<Integer> labelsIndex = new ArrayList<>();
 
-        if(checkStart())
+        /*
+         * Проверяем начало и конец программы на соответствие шаблону
+         */
+        if (checkStart())
             System.out.println("Шапка программы - OK");
-
-        for (int i = 5; i < lexer.text.size(); i++){
-            switch (lexer.text.get(i)) {
-                case "int":
-                    checkInt(i);
-                    break;
-                case "double":
-                    checkDouble(i);
-                    break;
-                case "string":
-                    checkString(i);
-                    break;
-                case "for":
-                    checkFor(i);
-                    break;
-                case "if":
-                    checkIf(i);
-                    break;
-                case ":":
-                    labelsIndex.add(checkLabel(i));
-                    break;
-                case "goto":
-                    checkGoto(i);
-                    break;
-                case "cout":
-                    checkCout(i);
-                    break;
-                case "cin":
-                    checkCin(i);
-                    break;
-                default:
-                    checkOther(i);
-                    break;
-            }
-            for (int j = 0; j < parenthesisFor.size(); j++)
-                if (parenthesisFor.get("for" + j).equals(i))
-                    poliz.toPoliz("!!FOR");
-            for (int j = 0; j < parenthesisIf.size(); j++)
-                if (parenthesisIf.get("if" + j).equals(i))
-                    poliz.toPoliz("!!IF");
-            for (int j = 0; j < parenthesisElse.size(); j++)
-                if (parenthesisElse.get("else" + j).equals(i))
-                    poliz.toPoliz("!!ELSE");
-        }
-
-        System.out.println("Вся программа - OK");
 
         if (checkEnd())
             System.out.println("Футер программы - OK");
 
-        for (String a: poliz.getAll()) {
+        /*
+         * Проходимся по всем лексемам и при совпадении с ключевыми словами
+         * проверяем на соответствие конструкций шаблону
+         */
+        for (count = 5; count < lexer.text.size(); count++) {
+            switch (lexer.text.get(count)) {
+                case "int":
+                    checkInt(count);
+                    break;
+                case "double":
+                    checkDouble(count);
+                    break;
+                case "string":
+                    checkString(count);
+                    break;
+                case "for":
+                    checkFor(count);
+                    break;
+                case "if":
+                    checkIf(count);
+                    break;
+                case "else":
+                    checkElse(count);
+                    break;
+                case ":":
+                    labelsIndex.add(checkLabel(count));
+                    break;
+                case "goto":
+                    checkGoto(count);
+                    break;
+                case "cout":
+                    checkCout(count);
+                    break;
+                case "cin":
+                    checkCin(count);
+                    break;
+                default:
+                    checkOther(count);
+                    break;
+            }
+
+            /*
+             * Проверяем все закрывающие символы для конструкций
+             * if, else и for и записываем их в ПОЛИЗ, если координаты
+             * совпадают с текущим состоянием главного цикла
+             */
+            for (int j = 0; j < parenthesisFor.size(); j++)
+                if (parenthesisFor.get("for" + j).equals(count))
+                    poliz.toPoliz("!!FOR");
+            for (int j = 0; j < parenthesisIf.size(); j++)
+                if (parenthesisIf.get("if" + j).equals(count)) {
+                    poliz.toPoliz("!!IF");
+                    int tmp = poliz.find("TMP");
+                    poliz.replace(tmp - 1, poliz.getSize() + " - " + poliz.get(tmp - 1).split(" - ")[1]);
+                }
+            for (int j = 0; j < parenthesisElse.size(); j++)
+                if (parenthesisElse.get("else" + j).equals(count))
+                    poliz.toPoliz("!!ELSE");
+        }
+
+        /*
+         * Если всё хорошо - выводим сообщение
+         */
+        System.out.println("Вся программа - OK");
+
+        /*
+         * Выводим весь ПОЛИЗ в нужное нам текстовое поле
+         * в интерфейсе пользователя
+         */
+        for (String a : poliz.getAll()) {
             ui.polizArea.setText(ui.polizArea.getText() + a + "\n");
             System.out.println(a);
         }
     }
 
+    /*
+     * Функция проверки начала программы на соответствие шаблону
+     */
     private boolean checkStart() {
         if (!lexer.letter.get(0).equals("n") && !lexer.text.get(0).equals("int"))
             ui.console.write(Errors.getErrors(0, lexer.line.get(0)));
@@ -112,6 +180,9 @@ public class Syntax {
             return false;
     }
 
+    /*
+     * Функция проверки конца программы на соответствие шаблону
+     */
     private boolean checkEnd(){
         if (!lexer.letter.get(lexer.letter.size() - 4).equals("k") && !lexer.text.get(lexer.letter.size() - 4).equals("return"))
             ui.console.write(Errors.getErrors(1, lexer.line.get(lexer.letter.size() - 4)));
@@ -129,13 +200,23 @@ public class Syntax {
         return false;
     }
 
+    /*
+     * Функция проверки переменных с типом int
+     */
     private void checkInt(int index) {
+        /*
+         * Проверяем чтоб такой переменной не существовало
+         */
         if (!lexer.text.get(index - 2).equals("for")) {
             for (String name : varName) {
                 if (name.equals(lexer.text.get(index + 1)))
                     ui.console.write(Errors.getErrors(25, lexer.line.get(index + 1)));
             }
-        } else {
+        }
+        /*
+         * Если переменная объявляется в цикле
+         */
+        else {
             if (!poliz.get(poliz.getSize() - 2).contains("=")) {
                 poliz.toPoliz("T" + lexer.text.get(index + 1));
                 poliz.toPoliz("0");
@@ -145,26 +226,41 @@ public class Syntax {
                 varName.add(lexer.text.get(index + 1));
                 varType.add("int");
                 varValue.add(lexer.text.get(index + 3));
+
+                count += 18;
+
                 return;
             }
         }
 
+        /*
+         * Проверяем на то, заканчивается ли строка символом окончания строки
+         */
         String s = "";
         int i = index;
         int line = lexer.line.get(index);
+
         while (!lexer.text.get(i).equals(";")) {
             if (!lexer.line.get(i).equals(line))
                 break;
+
             s += lexer.text.get(i) + " ";
             i++;
         }
+
         s += lexer.text.get(i);
 
         if (s.charAt(s.length() - 1) != ';')
             ui.console.write(Errors.getErrors(4, lexer.line.get(index)));
 
+        /*
+         * Если в строке присутствует знак "="
+         */
         if (s.indexOf('=') != -1) {
 
+            /*
+             * Если значение переменной необходимо вычислить
+             */
             if (i - index > 4) {
                 String math = "";
                 i = index + 3;
@@ -174,6 +270,9 @@ public class Syntax {
                     i++;
                 }
 
+                /*
+                 * Если переменную необходимо математически посчитать
+                 */
                 if (!math.contains("cin")) {
                     math = math(math, lexer.line.get(i));
 
@@ -186,6 +285,9 @@ public class Syntax {
                     poliz.toPoliz("=");
                     poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
                 }
+                /*
+                 * Если значени переменной необходимо считать с консоли
+                 */
                 else {
                     poliz.toPoliz("V" + lexer.text.get(index + 1));
                     poliz.toPoliz("0");
@@ -193,7 +295,11 @@ public class Syntax {
                     poliz.toPoliz("R");
                 }
 
-            } else {
+            }
+            /*
+             * Если значение переменной явно инициализируется
+             */
+            else {
                 String tmp = "";
                 i = index + 1;
                 while (!lexer.text.get(i).equals(";")) {
@@ -202,35 +308,61 @@ public class Syntax {
                 }
                 String[] temp = tmp.replaceAll(" ", "").split("=");
 
+                /*
+                 * Если имя переменной больше 1 символа - выводим ошибку
+                 */
                 if (temp[0].length() >= 2)
                     ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
-                else if (!temp[1].matches("\\d{1,}")) {
-                    int ind = varName.indexOf(lexer.text.get(index + 3));
-                    if (ind != -1) {
-                        if (varType.get(ind).equals("int")) {
-                            varName.add(temp[0]);
-                            varType.add("int");
-                            varValue.add(lexer.text.get(index + 3));
+                else
+                    /*
+                     * Если переменная принимает значение от другой переменной
+                     */
+                    if (!temp[1].matches("\\d++")) {
+                        int ind = varName.indexOf(lexer.text.get(index + 3));
+                        /*
+                         * Если переменная, значение которой присваивается другой
+                         * переменной, существует
+                         */
+                        if (ind != -1) {
+                            if (varType.get(ind).equals("int")) {
+                                varName.add(temp[0]);
+                                varType.add("int");
+                                varValue.add(lexer.text.get(index + 3));
 
-                            poliz.toPoliz("V" + varName.get(varName.size() - 1));
-                            poliz.toPoliz("0");
-                            poliz.toPoliz("=");
-                            poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
-                        } else
-                            ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
+                                poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                                poliz.toPoliz("0");
+                                poliz.toPoliz("=");
+                                poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
+                            }
+                            /*
+                             * Иначе выводим ошибку
+                             */
+                            else
+                                ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
+                        }
                     }
-                } else {
-                    varName.add(temp[0]);
-                    varType.add("int");
-                    varValue.add(Integer.valueOf(temp[1]));
+                    /*
+                     * Если значение переменной явно инициализируется в исходной программе
+                     */
+                    else {
+                        varName.add(temp[0]);
+                        varType.add("int");
+                        varValue.add(Integer.valueOf(temp[1]));
 
-                    poliz.toPoliz("V" + varName.get(varName.size() - 1));
-                    poliz.toPoliz("0");
-                    poliz.toPoliz("=");
-                    poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
-                }
+                        poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                        poliz.toPoliz("0");
+                        poliz.toPoliz("=");
+                        poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
+                    }
             }
-        } else {
+        }
+        /*
+         * Если в строке отсутствует знак "="
+         */
+        else {
+            /*
+             * Записываем всю строку в переменную
+             */
             String tmp = "";
             i = index;
             while (!lexer.text.get(i).equals(";")) {
@@ -238,10 +370,19 @@ public class Syntax {
                 i++;
             }
 
+            /*
+             * Разделяем по пробелам
+             */
             String[] temp = tmp.split(" ");
 
+            /*
+             * Если имя переменной больше 1 символа - ошибка
+             */
             if (temp[1].length() >= 2)
                 ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
+            /*
+             * Иначе записываем пустую переменную
+             */
             else {
                 varType.add("int");
                 varName.add(temp[1]);
@@ -255,39 +396,68 @@ public class Syntax {
         }
     }
 
+    /*
+     * Функция проверки переменных с типом double
+     */
     private void checkDouble(int index){
+        /*
+         * Проверяем не существует ли переменная уже с таким названием
+         */
         if (!lexer.text.get(index - 2).equals("for")) {
             for (String name : varName) {
                 if (name.equals(lexer.text.get(index + 1)))
                     ui.console.write(Errors.getErrors(25, lexer.line.get(index + 1)));
             }
-        }else {
+        }
+        /*
+         * Если переменная объявляется в цикле
+         */
+        else {
             poliz.toPoliz("T" + lexer.text.get(index + 1));
             poliz.toPoliz("1");
             poliz.toPoliz("=");
             poliz.toPoliz(lexer.text.get(index + 3));
+
             varName.add(lexer.text.get(index + 1));
             varType.add("double");
             varValue.add(lexer.text.get(index + 3));
+
+            count += 18;
             return;
         }
 
+        /*
+         * Проверям на правильное окончаение строки
+         */
         String s = "";
         int i = index;
         int line = lexer.line.get(index);
+
         while (!lexer.text.get(i).equals(";")) {
             if (!lexer.line.get(i).equals(line))
                 break;
+
             s += lexer.text.get(i) + " ";
             i++;
         }
+
         s += lexer.text.get(i);
 
+        /*
+         * Если строка не заканчивается символом ";" - ошибка
+         */
         if (s.charAt(s.length() - 1) != ';')
             ui.console.write(Errors.getErrors(4, lexer.line.get(index)));
 
+        /*
+         * Если в строке присутствует знак присваивания
+         */
         if (s.indexOf('=') != -1) {
 
+            /*
+             * Если значение переменной необходимо вычислить или
+             * считать с консоли
+             */
             if (i - index > 4){
                 String math = "";
                 i = index + 3;
@@ -297,6 +467,9 @@ public class Syntax {
                     i++;
                 }
 
+                /*
+                 * Если значение необходимо математически посчитать
+                 */
                 if (!math.contains("cin")) {
                     math = math(math, lexer.line.get(i));
 
@@ -309,6 +482,9 @@ public class Syntax {
                     poliz.toPoliz("=");
                     poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
                 }
+                /*
+                 * Если значение переменной необходимо считать с консоли
+                 */
                 else {
                     poliz.toPoliz("V" + lexer.text.get(index + 1));
                     poliz.toPoliz("1");
@@ -316,58 +492,95 @@ public class Syntax {
                     poliz.toPoliz("R");
                 }
             }
+            /*
+             * Если значение переменной явно инициализировано в
+             * исходной программе
+             */
             else {
+                /*
+                 * Считываем всю строку
+                 */
                 String tmp = "";
                 i = index + 1;
+
                 while (!lexer.text.get(i).equals(";")) {
                     tmp += lexer.text.get(i) + " ";
                     i++;
                 }
+
                 String[] temp = tmp.replaceAll(" ", "").split("=");
 
+                /*
+                 * Проверяем чтобы имя переменной было не более 1 символа
+                 * иначе - ошибка
+                 */
                 if (temp[0].length() >= 2)
                     ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
-                else if (!temp[1].matches("\\d{1,}[.]\\d{1,}")) {
-                    int ind = varName.indexOf(lexer.text.get(index + 3));
-                    if (ind != -1){
-                        if (varType.get(ind).equals("double")) {
-                            varName.add(temp[0]);
-                            varType.add("double");
-                            varValue.add(lexer.text.get(index + 3));
+                else
+                    /*
+                     * Если переменная принимает значение от другой переменной
+                     */
+                    if (!temp[1].matches("\\d++[.]\\d++")) {
+                        /*
+                         * Проверяем чтоб такая переменная существовала. Иначе - ошибка
+                         */
+                        int ind = varName.indexOf(lexer.text.get(index + 3));
+                        if (ind != -1){
+                            if (varType.get(ind).equals("double")) {
+                                varName.add(temp[0]);
+                                varType.add("double");
+                                varValue.add(lexer.text.get(index + 3));
 
-                            poliz.toPoliz("V" + varName.get(varName.size() - 1));
-                            poliz.toPoliz("1");
-                            poliz.toPoliz("=");
-                            poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
+                                poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                                poliz.toPoliz("1");
+                                poliz.toPoliz("=");
+                                poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
+                            }
+                            else
+                                ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
                         }
-                        else
-                            ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
                     }
-                }
-                else{
-                    varName.add(temp[0]);
-                    varType.add("double");
-                    varValue.add(Double.valueOf(temp[1]));
+                    /*
+                     * Если значение переменной инициализировано явно
+                     * в исходной программе
+                     */
+                    else{
+                        varName.add(temp[0]);
+                        varType.add("double");
+                        varValue.add(Double.valueOf(temp[1]));
 
-                    poliz.toPoliz("V" + varName.get(varName.size() - 1));
-                    poliz.toPoliz("1");
-                    poliz.toPoliz("=");
-                    poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
-                }
+                        poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                        poliz.toPoliz("1");
+                        poliz.toPoliz("=");
+                        poliz.toPoliz(varValue.get(varValue.size() - 1).toString());
+                    }
             }
-        } else {
+        }
+        /*
+         * Если в строке отсуствует знак присваивания
+         */
+        else {
+
             String tmp = "";
             i = index;
             line = lexer.line.get(index);
+
+            /*
+             * проверяем на окончание строки знаком ";"
+             */
             while (!lexer.text.get(i).equals(";")) {
                 if (line != lexer.line.get(i))
                     ui.console.write(Errors.getErrors(4, lexer.line.get(i)));
+
                 tmp += lexer.text.get(i) + " ";
                 i++;
             }
 
             String[] temp = tmp.split(" ");
 
+            /*
+             * Если имя переменной больше одного символа - ошибка
+             */
             if (temp[1].length() >= 2)
                 ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
             else {
@@ -383,7 +596,13 @@ public class Syntax {
         }
     }
 
+    /*
+     * Функция проверки переменных с типом string
+     */
     private void checkString(int index){
+        /*
+         * Проверяем чтобы переменная с таким именем не существовала
+         */
         for (String item : varName) {
             if (item.equals(lexer.text.get(index + 1)))
                 ui.console.write(Errors.getErrors(25, lexer.line.get(index + 1)));
@@ -392,21 +611,32 @@ public class Syntax {
         String s = "";
         int i = index;
         int line = lexer.line.get(index);
+
         while (!lexer.text.get(i).equals(";")) {
             if (!lexer.line.get(i).equals(line))
                 break;
+
             s += lexer.text.get(i) + " ";
             i++;
         }
 
         s += lexer.text.get(i);
 
+        /*
+         * Проверяем на окончание строки знаком ";"
+         */
         if (s.charAt(s.length() - 1) != ';')
             ui.console.write(Errors.getErrors(4, lexer.line.get(index)));
 
+        /*
+         * Если в строке присутствует знак присваивания
+         */
         if (s.indexOf('=') != -1) {
 
-            if (i - index > 4){
+            /*
+             * Если значение переменной необходимо вычислить
+             */
+            if (i - index > 4) {
                 String value = "";
                 i = index + 3;
 
@@ -415,20 +645,48 @@ public class Syntax {
                     i++;
                 }
 
+                /*
+                 * Если значение переменной необходимо вычислить
+                 */
                 if (!value.contains("cin")){
 
-                    if (!lexer.text.get(index + 3).equals("\"") || !lexer.text.get(index + 5).equals("\""))
-                        ui.console.write(Errors.getErrors(5, lexer.line.get(index)));
+                    /*
+                     * Если необходимо склеить две строки
+                     */
+                    if (value.contains("+")) {
+                        varName.add(lexer.text.get(index + 1));
+                        varType.add("string");
+                        varValue.add(value);
 
-                    varName.add(lexer.text.get(index + 1));
-                    varType.add("string");
-                    varValue.add(lexer.text.get(index + 4));
+                        poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                        poliz.toPoliz("2");
+                        poliz.toPoliz("=");
+                        poliz.toPoliz("MA" + varValue.get(varValue.size() - 1).toString());
 
-                    poliz.toPoliz("V" + varName.get(varName.size() - 1));
-                    poliz.toPoliz("2");
-                    poliz.toPoliz("=");
-                    poliz.toPoliz("S" + varValue.get(varValue.size() - 1).toString());
+                        return;
+                    }
+                    /*
+                     * если значение переменной явно задано
+                     */
+                    else
+                        /*
+                         * Если значение строки не заключено в двойные кавычки - ошибка
+                         */
+                        if (!lexer.text.get(index + 3).equals("\"") || !lexer.text.get(index + 5).equals("\""))
+                            ui.console.write(Errors.getErrors(5, lexer.line.get(index)));
+
+                        varName.add(lexer.text.get(index + 1));
+                        varType.add("string");
+                        varValue.add(lexer.text.get(index + 4));
+
+                        poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                        poliz.toPoliz("2");
+                        poliz.toPoliz("=");
+                        poliz.toPoliz("S" + varValue.get(varValue.size() - 1).toString());
                 }
+                /*
+                 * Если значение переменной необходимо считать с консоли
+                 */
                 else {
                     varName.add(lexer.text.get(index + 1));
                     varType.add("string");
@@ -441,50 +699,73 @@ public class Syntax {
 
                 }
             }
+            /*
+             * Если значение переменной явно инициализированно
+             */
             else {
+                /*
+                 * Если имя переменной больше 1 символа - ошибка
+                 */
                 if (lexer.text.get(index + 1).length() >= 2)
                     ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
-                else if (!lexer.text.get(index + 3).equals("\"") && lexer.text.get(index + 3).matches("\\w")) {
-                    int ind = varName.indexOf(lexer.text.get(index + 3));
-                    if (ind != -1){
-                        if (varType.get(ind).equals("string")) {
-                            varName.add(lexer.text.get(index + 1));
-                            varType.add("string");
-                            varValue.add(lexer.text.get(index + 3));
+                else
+                    if (!lexer.text.get(index + 3).equals("\"") && lexer.text.get(index + 3).matches("\\w")) {
+                        /*
+                         * Если переменная не была объявлена ранее - создаём её
+                         * иначе - ошибка
+                         */
+                        int ind = varName.indexOf(lexer.text.get(index + 3));
+                        if (ind != -1){
+                            if (varType.get(ind).equals("string")) {
+                                varName.add(lexer.text.get(index + 1));
+                                varType.add("string");
+                                varValue.add(lexer.text.get(index + 3));
 
-                            poliz.toPoliz("V" + varName.get(varName.size() - 1));
-                            poliz.toPoliz("2");
-                            poliz.toPoliz("=");
-                            poliz.toPoliz("S" + varValue.get(varValue.size() - 1).toString());
+                                poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                                poliz.toPoliz("2");
+                                poliz.toPoliz("=");
+                                poliz.toPoliz("S" + varValue.get(varValue.size() - 1).toString());
+                            }
+                            else
+                                ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
                         }
-                        else
-                            ui.console.write(Errors.getErrors(7, lexer.line.get(index)));
                     }
-                }
-                else{
-                    varName.add(lexer.text.get(index + 1));
-                    varType.add("string");
-                    varValue.add(lexer.text.get(index + 4));
+                    else{
+                        varName.add(lexer.text.get(index + 1));
+                        varType.add("string");
+                        varValue.add(lexer.text.get(index + 4));
 
-                    poliz.toPoliz("V" + varName.get(varName.size() - 1));
-                    poliz.toPoliz("2");
-                    poliz.toPoliz("=");
-                    poliz.toPoliz("S" + varValue.get(varValue.size() - 1).toString());
-                }
+                        poliz.toPoliz("V" + varName.get(varName.size() - 1));
+                        poliz.toPoliz("2");
+                        poliz.toPoliz("=");
+                        poliz.toPoliz("S" + varValue.get(varValue.size() - 1).toString());
+                    }
             }
-        } else {
+        }
+        /*
+         * Если знак присваивания отсуствует
+         */
+        else {
             String tmp = "";
             i = index;
             line = lexer.line.get(index);
+
             while (!lexer.text.get(i).equals(";")) {
+                /*
+                 * Если строка не оканчивается символом ";" - ошибка
+                 */
                 if (line != lexer.line.get(i))
                     ui.console.write(Errors.getErrors(4, lexer.line.get(i)));
+
                 tmp += lexer.text.get(i) + " ";
                 i++;
             }
 
             String[] temp = tmp.split(" ");
 
+            /*
+             * Если имя переменной более 1 символа - ошибка
+             */
             if (temp[1].length() >= 2)
                 ui.console.write(Errors.getErrors(3, lexer.line.get(index)));
             else {
@@ -500,6 +781,9 @@ public class Syntax {
         }
     }
 
+    /*
+     * Функция проверки конструкции for
+     */
     private void checkFor(int index) {
         poliz.toPoliz("!FOR");
         if (!lexer.text.get(index + 1).equals("(") && !lexer.letter.get(index + 1).equals("s"))
@@ -684,10 +968,15 @@ public class Syntax {
         }
     }
 
+    /*
+     * Функция проверки конструкции if
+     */
     private void checkIf(int index) {
         if (!lexer.text.get(index).equals("if") && !lexer.letter.get(index).equals("k"))
             ui.console.write(Errors.getErrors(14, lexer.line.get(index)));
         else {
+            poliz.toPoliz("!IF");
+
             if (!lexer.text.get(index + 1).equals("(") && !lexer.letter.get(index + 1).equals("s"))
                 ui.console.write(Errors.getErrors(14, lexer.line.get(index + 1)));
 
@@ -703,6 +992,9 @@ public class Syntax {
             }
 
             logical(expression, lexer.line.get(i));
+
+            poliz.toPoliz(expression);
+            poliz.toPoliz("TMP");
 
             if (!lexer.text.get(i).equals("{") && !lexer.letter.get(i).equals("s"))
                 ui.console.write(Errors.getErrors(15, lexer.line.get(i)));
@@ -737,42 +1029,55 @@ first:
             if (notEnd)
                 ui.console.write(Errors.getErrors(16, lexer.line.get(line)));
 
-            if (lexer.text.get(j + 1).equals("else")) {
-                if (!lexer.text.get(j + 2).equals("{"))
-                    ui.console.write(Errors.getErrors(18, lexer.line.get(j + 2)));
-
-                notEnd = true;
-                line = 0;
-                count = 0;
-                first:
-                for (i = j + 2; i < lexer.text.size() - 1; i++) {
-                    line = lexer.line.get(i);
-                    if (lexer.text.get(i).equals("for") || lexer.text.get(i).equals("if") || lexer.text.get(i).equals("else"))
-                        count++;
-
-                    else if (lexer.text.get(i).equals("}")) {
-                        if (count != 0) {
-                            count--;
-                        } else if (parenthesisElse.isEmpty()) {
-                            notEnd = false;
-                            parenthesisElse.put("else" + parenthesisElse.size(), i);
-                            break;
-                        } else
-                            for (int k = 0; k < parenthesisElse.size(); k++) {
-                                if (parenthesisElse.get("else" + k) != i) {
-                                    notEnd = false;
-                                    parenthesisElse.put("else" + parenthesisElse.size(), i);
-                                    break first;
-                                }
-                            }
-                    }
-                }
-                if (notEnd)
-                    ui.console.write(Errors.getErrors(19, lexer.line.get(line)));
-            }
         }
     }
 
+    /*
+     * Функция проверки конструкции else
+     */
+    private void checkElse(int index){
+        if (lexer.text.get(index).equals("else")) {
+
+            poliz.toPoliz("!ELSE");
+
+            if (!lexer.text.get(index + 1).equals("{"))
+                ui.console.write(Errors.getErrors(18, lexer.line.get(index + 1)));
+
+            boolean notEnd = true;
+            int line = 0;
+            int count = 0;
+
+            first:
+            for (int i = index+1; i < lexer.text.size() - 1; i++) {
+                line = lexer.line.get(i);
+                if (lexer.text.get(i).equals("for") || lexer.text.get(i).equals("if") || lexer.text.get(i).equals("else"))
+                    count++;
+                else if (lexer.text.get(i).equals("}")) {
+                    if (count != 0) {
+                        count--;
+                    } else if (parenthesisElse.isEmpty()) {
+                        notEnd = false;
+                        parenthesisElse.put("else" + parenthesisElse.size(), i);
+                        break;
+                    } else
+                        for (int k = 0; k < parenthesisElse.size(); k++) {
+                            if (parenthesisElse.get("else" + k) != i) {
+                                notEnd = false;
+                                parenthesisElse.put("else" + parenthesisElse.size(), i);
+                                break first;
+                            }
+                        }
+                }
+            }
+
+            if (notEnd)
+                ui.console.write(Errors.getErrors(19, lexer.line.get(line)));
+        }
+    }
+
+    /*
+     * Функция проверки конструкции cout
+     */
     private void checkCout(int index) {
         if (!lexer.text.get(index).equals("cout") || !lexer.letter.get(index).equals("k"))
             ui.console.write(Errors.getErrors(20, lexer.line.get(index)));
@@ -824,6 +1129,9 @@ first:
         }
     }
 
+    /*
+     * Функция проверки конструкции cin
+     */
     private void checkCin(int index){
             if (!lexer.text.get(index).equals("cin") && !lexer.letter.get(index).equals("k"))
                 ui.console.write(Errors.getErrors(21, lexer.line.get(index)));
@@ -835,6 +1143,9 @@ first:
                 ui.console.write(Errors.getErrors(4, lexer.line.get(index + 3)));
     }
 
+    /*
+     * Функция проверки записи меток
+     */
     private int checkLabel(int index){
         if (!lexer.letter.get(index - 1).equals("i"))
             ui.console.write(Errors.getErrors(22, lexer.line.get(index)));
@@ -855,6 +1166,9 @@ first:
         return 0;
     }
 
+    /*
+     * Функция проверки записи goto
+     */
     private void checkGoto(int index) {
         boolean isReal = false;
         for (String label : labels)
@@ -870,7 +1184,9 @@ first:
         poliz.toPoliz("G" + lexer.text.get(index + 1));
     }
 
-    //todo не проверяется на мутацию, если там больше символом - скорее всего ошибка
+    /*
+     * Функция проверки всего остального
+     */
     private void checkOther(int index) {
         //проверяем на мутации переменных
         for (int i = 0; i < varName.size(); i++)
@@ -881,7 +1197,7 @@ first:
                         System.out.println(varType.get(i));
                         if (varType.get(i).equals("int")) {
                             //если значение переменной явно указано
-                            if (lexer.text.get(index + 2).matches("\\d{1,}") && lexer.text.get(index + 3).equals(";")) {
+                            if (lexer.text.get(index + 2).matches("\\d++") && lexer.text.get(index + 3).equals(";")) {
                                 varValue.set(i, lexer.text.get(index + 2));
                                 poliz.toPoliz(varName.get(i));
                                 poliz.toPoliz(lexer.text.get(index + 2));
@@ -913,7 +1229,7 @@ first:
                             //если изменяется переменная типа double
                             if (varType.get(i).equals("double")) {
                                 //если значение переменной явно указано
-                                if (lexer.text.get(index + 2).matches("\\d{1,}[.]\\d{1,}") && lexer.text.get(index + 3).equals(";")) {
+                                if (lexer.text.get(index + 2).matches("\\d++[.]\\d++") && lexer.text.get(index + 3).equals(";")) {
                                     varValue.set(i, lexer.text.get(index + 2));
                                     poliz.toPoliz(varName.get(i));
                                     poliz.toPoliz(lexer.text.get(index + 2));
@@ -948,6 +1264,11 @@ first:
 
     }
 
+    /*
+     * Метод, преобразующий входную строку
+     * с математическим выражением в нужный вид для
+     * расчётов
+     */
     private String math(String text, int line){
         String[] tokens = text.replaceAll("\\+", " + ")
                 .replaceAll("-", " - ")
@@ -976,6 +1297,9 @@ first:
         return result.toString();
     }
 
+    /*
+     * Функция проверки записи условий
+     */
     private boolean logical(String expression, int line) {
         String[] words = expression.split(" ");
         String operators = "> < <= >= != ! == || &&";
@@ -998,10 +1322,10 @@ first:
         return true;
     }
 
+    /*
+     * Метод, возвращающий ПОЛИЗ для интерпритации
+     */
     public Poliz getPoliz(){
         return poliz;
     }
 }
-/*
- * todo условия
- */

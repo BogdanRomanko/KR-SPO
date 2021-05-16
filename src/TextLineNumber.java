@@ -6,14 +6,13 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-/**
- *  This class will display line numbers for a related text component. The text
- *  component must use the same line height for each line. TextLineNumber
- *  supports wrapped lines and will highlight the line number of the current
- *  line in the text component.
+/*
+ * Этот класс будет отображать номера строк для связанного текстового компонента. Текстовый
+ * компонент должен использовать одинаковую высоту строки для каждой строки. TextLineNumber
+ * поддерживает перенос строк и выделит номер текущей строки в текстовом компоненте.
  *
- *  This class was designed to be used as a component added to the row header
- *  of a JScrollPane.
+ * Этот класс был разработан для использования в качестве компонента,
+ * добавляемого в заголовок строки JScrollPane.
  */
 public class TextLineNumber extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener
 {
@@ -25,21 +24,24 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
 
     private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
 
-    //  Text component this TextTextLineNumber component is in sync with
-
+    /*
+     * Текстовый компонент, этот компонент TextTextLineNumber синхронизируется
+     */
     private JTextComponent component;
 
-    //  Properties that can be changed
-
+    /*
+     * Свойства, которые можно изменить
+     */
     private boolean updateFont;
     private int borderGap;
     private Color currentLineForeground;
     private float digitAlignment;
     private int minimumDisplayDigits;
 
-    //  Keep history information to reduce the number of times the component
-    //  needs to be repainted
-
+    /*
+     * Сохраняйте информацию истории, чтобы уменьшить количество раз,
+     * когда компонент нужно перерисовать
+     */
     private int lastDigits;
     private int lastHeight;
     private int lastLine;
@@ -47,25 +49,23 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     private HashMap<String, FontMetrics> fonts;
 
     /**
-     *	Create a line number component for a text component. This minimum
-     *  display width will be based on 3 digits.
+     *	Создаёт компонент номера строки для текстового компонента.
+     *	Эта минимальная ширина дисплея будет основана на 3-х цифрах.
      *
-     *  @param component  the related text component
+     *  @param component связанный текстовый компонент
      */
-    public TextLineNumber(JTextComponent component)
-    {
+    public TextLineNumber(JTextComponent component) {
         this(component, 3);
     }
 
     /**
-     *	Create a line number component for a text component.
+     *	Создаёт компонент номера строки для текстового компонента
      *
-     *  @param component  the related text component
-     *  @param minimumDisplayDigits  the number of digits used to calculate
-     *                               the minimum width of the component
+     *  @param component  связанный текстовый компонент
+     *  @param minimumDisplayDigits  количество цифр, используемых для расчета
+     *                               минимальной ширины компонента
      */
-    public TextLineNumber(JTextComponent component, int minimumDisplayDigits)
-    {
+    public TextLineNumber(JTextComponent component, int minimumDisplayDigits) {
         this.component = component;
 
         setFont( component.getFont() );
@@ -81,9 +81,9 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     }
 
     /**
-     *  Gets the update font property
+     *  Получений свойств для обновления шрифта
      *
-     *  @return the update font property
+     *  @return свойства обновления шрифта
      */
     public boolean getUpdateFont()
     {
@@ -91,9 +91,9 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     }
 
     /**
-     *  Set the update font property. Indicates whether this Font should be
-     *  updated automatically when the Font of the related text component
-     *  is changed.
+     *  Установите свойство шрифта обновления. Указывает, должен ли этот шрифт быть
+     *  обновлён автоматически, когда шрифт связанного текстового компонента
+     *  изменен.
      *
      *  @param updateFont  when true update the Font and repaint the line
      *                     numbers, otherwise just repaint the line numbers.

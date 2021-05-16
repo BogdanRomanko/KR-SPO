@@ -2,12 +2,19 @@ import java.util.Stack;
 
 public class Lexer {
 
+    /*
+     * Массивы с ключевыми словами, разделителями и прочим для
+     * ЯП Small C++
+     */
     private String[] separators = {",", ";", "{", "}", "(", ")", "\""};
     private String[] operators = {"+", "-", "*", "/", "=", "!", ">", "<", "==", "<=", ">=", "!=", "||", "&&", ":"};
     private String[] keyWords = {"if", "else", "for", "goto", "cin", "cout", "main", "return"};
     private String[] comments = {"/*", "*/", "//"};
     private String[] types = {"int", "double", "string"};
 
+    /*
+     * Счётчики определённых лексических токенов ЯП
+     */
     private int k = 0; //key words
     private int s = 0; //separator
     private int i = 0; //identifier
@@ -16,6 +23,10 @@ public class Lexer {
     private int d = 0; //double
     private int o = 0; //operator
 
+    /*
+     * Стэки, хранящие в себе лексические токены, позиции токенов,
+     * текст и номера линий
+     */
     public Stack <String> letter;
     public Stack <Integer> position;
     public Stack <String> text;
@@ -23,8 +34,17 @@ public class Lexer {
 
     private int LineId = 0;
 
+    /*
+     * Поле, хранящее ссылку на интерфейс пользователя
+     * для корректной работы с текстовым полем лексического анализатора
+     * и лексической таблицы
+     */
     private UI ui;
 
+    /*
+     * Конструктор класса, инициализирующий интерфейс пользователя
+     * и запускающий проверку полученной программы
+     */
     public Lexer(String program, UI ui) {
         this.ui = ui;
 
@@ -33,6 +53,9 @@ public class Lexer {
         text = new Stack<>();
         line = new Stack<>();
 
+        /*
+         * Разбиваем переданный текст на массив линий
+         */
         String[] lines = program.
                 replaceAll("\n", " \n")
                 .replaceAll("\\+", " + ")
@@ -47,31 +70,66 @@ public class Lexer {
         boolean isStr = false;
         boolean isComm = false;
 
-
+        /*
+         * В основном цикле проходимся по всем строкам программы
+         */
         for (int i = 0; i < lines.length; i++) {
+            /*
+             * Разбиваем строку на массив символов
+             */
             tempLines = lines[i].toCharArray();
             LineId = i;
 
-
+            /*
+             * По каждому символу строки проходимся отдельным циклом
+             */
             for (int j = 0; j < lines[i].length(); j++) {
                 second:
                 {
                     char second;
-
+                    char pastChar = ' ';
+                    /*
+                     * Если символ является буквой, цифрой или знаком точка,
+                     * то записываем его в буфер
+                     */
                     if (String.valueOf(tempLines[j]).matches("\\d|\\w|[.]"))
                         buffer += tempLines[j];
                     else {
 
+                        /*
+                         * Если следующий символ от текущего является последниим,
+                         * дополнительный символ обнуляем
+                         */
                         if (j + 1 >= tempLines.length)
                             second = ' ';
+                        /*
+                         * Иначе считываем в дополнительный символ следующий
+                         * от текущего
+                         */
                         else
                             second = tempLines[j + 1];
 
+                        /*
+                         * Если предыдущий символ хотя бы первый символ строки
+                         */
+                        if (j - 1 >= 0)
+                            pastChar = tempLines[j - 1];
+
+
+                        /*
+                         * Если текущий символ не равен символу двойной кавычки,
+                         * то записываем его в буффер и возвращаемся назад на метку second
+                         */
                         while (isStr) {
                             if (tempLines[j] != '"') {
                                 buffer += tempLines[j];
                                 break second;
-                            } else {
+                            }
+                            /*
+                             * Иначе проверяем буфер с помощью метода checkOther, выводим на экран (консоль)
+                             * буфер, очищаем его и вовзращаемся на метку second
+                             */
+                            else {
                                 isStr = false;
                                 checkOther(buffer);
 
@@ -88,7 +146,19 @@ public class Lexer {
                             }
                         }
 
+                        /*
+                         * Проверяем текущую линию на то, является ли она
+                         * комментарием и возвращаем код вида комментария,
+                         * где 1 - строчный комментарий;
+                         * 2 - начало многострочного комментария;
+                         * 3 - конец многострочного комментария
+                         */
                         int comm = checkComments(tempLines[j], second);
+
+                        /*
+                         * Проверяем на то, какой комментарий был встречен и выводим информацию
+                         * на экран (консоль)
+                         */
                         if (comm == 1) {
                             System.out.println("[COMMENT LINE] - " + tempLines[j] + second);
                             ui.lexerArea.setText(ui.lexerArea.getText() + "[COMMENT LINE] - " + tempLines[j] + second + "\n");
@@ -108,14 +178,33 @@ public class Lexer {
                             break second;
                         }
 
+                        /*
+                         * Если многострочный комментарий не закончился,
+                         * возвращаемся на метку second
+                         */
                         if (isComm)
                             break second;
 
+                        /*
+                         * Проверяем каким типом данных является буфер, где
+                         * 1 - тип данных int
+                         * 2 - тип данных double
+                         * 3 - тип данных string
+                         */
                         int type = checkType(buffer);
+
+                        /*
+                         * Проверяем каким ключевым словом является наш буфер, и
+                         * является ли. Если да - выводим на экран и очищаем буфер
+                         */
                         if (checkKeyWords(buffer)) {
                             System.out.println("[KEYWORD] - " + buffer);
                             ui.lexerArea.setText(ui.lexerArea.getText() + "[KEYWORD] - " + buffer + "\n");
                         }
+
+                        /*
+                         * В зависимости от типа данных, выводим на экран (консоль) информацию об этом
+                         */
                         else if (type == 1){
                             System.out.println("[INTEGER] - " + buffer);
                             ui.lexerArea.setText(ui.lexerArea.getText() + "[INTEGER] - " + buffer + "\n");
@@ -133,7 +222,17 @@ public class Lexer {
                             ui.lexerArea.setText(ui.lexerArea.getText() + "[IDENTIFIER] - " + buffer + "\n");
                         }
 
-                        int oper = checkOperators(tempLines[j], second);
+                        /*
+                         * Проверяем каким оператором является буфер, где
+                         * 1 - односимвольный оператор
+                         * 2 - двусимвольный оператор
+                         */
+                        int oper = checkOperators(tempLines[j], second, pastChar);
+
+                        /*
+                         * В зависимости от типа оператора, выводим информацию на
+                         * экран (консоль)
+                         */
                         if (oper == 2) {
                             System.out.println("[OPERATOR] - " + tempLines[j] + second);
                             ui.lexerArea.setText(ui.lexerArea.getText() + "[OPERATOR] - " + tempLines[j] + second + "\n");
@@ -143,14 +242,25 @@ public class Lexer {
                             System.out.println("[OPERATOR] - " + tempLines[j]);
                             ui.lexerArea.setText(ui.lexerArea.getText() + "[OPERATOR] - " + tempLines[j] + "\n");
                         }
+                        /*
+                         * Если не является оператором, проверяем на то, является ли разделителем
+                         * и выводим на экран (консоль)
+                         */
                         else if (checkSeparators(String.valueOf(tempLines[j]))) {
                             System.out.println("[SEPARATOR] - " + tempLines[j]);
                             ui.lexerArea.setText(ui.lexerArea.getText() + "[SEPARATOR] - " + tempLines[j] + "\n");
                         }
 
+                        /*
+                         * Если текущий символ является двойной кавычкой, отмечаем начало
+                         * строки
+                         */
                         if (tempLines[j] == '"')
                             isStr = true;
 
+                        /*
+                         * Очищаем буфер
+                         */
                         buffer = "";
                     }
 
@@ -159,17 +269,17 @@ public class Lexer {
 
         }
 
-
+        /*
+         * Выводим лексическую таблицу в интерфейсе пользователя
+         */
         for (int i = 0; i < letter.size(); i++)
             ui.lexerTableArea.setText(ui.lexerTableArea.getText() + text.get(i) + "\t" + letter.get(i) + "\t" + position.get(i) + "\n");
 
-
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
     }
 
+    /*
+     * Метод, проверяющий является ли слово ключевым
+     */
     private boolean checkKeyWords(String word) {
         for (String keyWord : keyWords)
             if (word.equals(keyWord)) {
@@ -184,6 +294,9 @@ public class Lexer {
         return false;
     }
 
+    /*
+     * Метод, проверяющий является ли слово разделителем
+     */
     private boolean checkSeparators(String word) {
         for (String separator : separators)
             if (word.equals(separator)) {
@@ -198,6 +311,10 @@ public class Lexer {
         return false;
     }
 
+    /*
+     * Метод, проверяющий является ли слово
+     * типом данных и каким именно, если является
+     */
     private int checkType(String word) {
         if (word.equals(types[0])) {
             letter.push("n");
@@ -225,7 +342,11 @@ public class Lexer {
         return 0;
     }
 
-    private int checkOperators(char word, char nextChar) {
+    /*
+     * Метод, проверяющий являетя ли слово оператором и
+     * двусимвольным или односимвольным, если является
+     */
+    private int checkOperators(char word, char nextChar, char pastChar) {
         for (String operator : operators)
             if (operator.length() == 2)
                 if (word == operator.charAt(0) && nextChar == operator.charAt(1)) {
@@ -234,11 +355,12 @@ public class Lexer {
                     text.push(operator);
                     line.push(LineId);
                     o++;
+
                     return 2;
                 }
 
         for (String operator : operators)
-            if (String.valueOf(word).equals(operator)) {
+            if (String.valueOf(word).equals(operator) && pastChar != '=' && pastChar != '>' && pastChar != '<' && pastChar != '!') {
                 letter.push("o");
                 position.push(o);
                 text.push(operator);
@@ -247,10 +369,13 @@ public class Lexer {
                 return 1;
             }
 
-
         return 0;
     }
 
+    /*
+     * Проверяет является ли слово комментарием и каким именно,
+     * если является
+     */
     private int checkComments(char word, char nextChar) {
         if (word == comments[2].charAt(0) && nextChar == comments[2].charAt(1))
             return 1;
@@ -262,9 +387,11 @@ public class Lexer {
         return 0;
     }
 
+    /*
+     * Проверка на всё остальное (идентификаторы)
+     */
     private int checkOther(String word) {
         if (word.length() > 0) {
-
             letter.push("i");
             position.push(i);
             i++;

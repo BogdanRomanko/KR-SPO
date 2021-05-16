@@ -7,11 +7,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d20ee30b-a740-4e15-93be-80f873f386a8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/InterpreterThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/TextAreaStreamer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/test/Interpreter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Interpreter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Lexer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/test/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/Poliz.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Poliz.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/Syntax.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Syntax.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/test/TextLineNumber.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/TextLineNumber.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/test/UI$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/test/UI$10.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$10.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/test/UI$11.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI$11.class" afterDir="false" />
@@ -33,7 +35,13 @@
       <change beforePath="$PROJECT_DIR$/out/production/test/UI.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/UI.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Console.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Console.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/InterpreterThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/InterpreterThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Poliz.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Poliz.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Syntax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Syntax.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TextAreaStreamer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TextAreaStreamer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TextLineNumber.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TextLineNumber.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UI.java" afterDir="false" />
     </list>
     <list id="d6c01aee-83ef-4b45-a905-4f785256729f" name="New changelist" comment="" />
@@ -193,7 +201,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619650540119</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="UI&#10;Считываение из консоли значений">
+      <created>1619703941280</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1619703941280</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -232,17 +247,18 @@
     <MESSAGE value="UI + Interpreter" />
     <MESSAGE value="Lexer + Syntax + Poliz + Interpreter + UI" />
     <MESSAGE value="Lexer + Syntax + Poliz + Interpreter + UI&#10;какой-то пиздец" />
-    <option name="LAST_COMMIT_MESSAGE" value="Lexer + Syntax + Poliz + Interpreter + UI&#10;какой-то пиздец" />
+    <MESSAGE value="UI&#10;Считываение из консоли значений" />
+    <option name="LAST_COMMIT_MESSAGE" value="UI&#10;Считываение из консоли значений" />
   </component>
   <component name="WindowStateProjectService">
     <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1619096243265">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1619096243265" />
-    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser" timestamp="1619703217341">
+    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser" timestamp="1619704432405">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1010@0.0.1680.1010" timestamp="1619703217341" />
+    <state x="645" y="213" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1010@0.0.1680.1010" timestamp="1619704432405" />
     <state x="569" y="288" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1619096242392">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -251,10 +267,10 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="725" y="391" key="#com.intellij.uiDesigner.palette.ComponentItemDialog.OneOff/0.0.1680.1010@0.0.1680.1010" timestamp="1618170299420" />
-    <state x="494" y="0" key="CommitChangelistDialog2" timestamp="1619650538292">
+    <state x="494" y="0" key="CommitChangelistDialog2" timestamp="1619703939221">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="494" y="0" key="CommitChangelistDialog2/0.0.1680.1010@0.0.1680.1010" timestamp="1619650538292" />
+    <state x="494" y="0" key="CommitChangelistDialog2/0.0.1680.1010@0.0.1680.1010" timestamp="1619703939221" />
     <state width="398" height="466" key="DebuggerActiveHint" timestamp="1619106964194">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -267,38 +283,38 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="619" y="245" key="FileChooserDialogImpl/0.0.1680.1010@0.0.1680.1010" timestamp="1619699128373" />
-    <state width="1636" height="272" key="GridCell.Tab.0.bottom" timestamp="1619703663559">
+    <state width="1636" height="215" key="GridCell.Tab.0.bottom" timestamp="1621123013800">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1619703663559" />
-    <state width="1636" height="272" key="GridCell.Tab.0.center" timestamp="1619703663559">
+    <state width="1636" height="215" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1621123013800" />
+    <state width="1636" height="215" key="GridCell.Tab.0.center" timestamp="1621123013799">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1619703663559" />
-    <state width="1636" height="272" key="GridCell.Tab.0.left" timestamp="1619703663559">
+    <state width="1636" height="215" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1621123013799" />
+    <state width="1636" height="215" key="GridCell.Tab.0.left" timestamp="1621123013799">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1619703663559" />
-    <state width="1636" height="272" key="GridCell.Tab.0.right" timestamp="1619703663559">
+    <state width="1636" height="215" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1621123013799" />
+    <state width="1636" height="215" key="GridCell.Tab.0.right" timestamp="1621123013799">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="272" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1619703663559" />
-    <state width="1636" height="241" key="GridCell.Tab.1.bottom" timestamp="1619700423951">
+    <state width="1636" height="215" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1621123013799" />
+    <state width="1636" height="241" key="GridCell.Tab.1.bottom" timestamp="1621121586801">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1619700423951" />
-    <state width="1636" height="241" key="GridCell.Tab.1.center" timestamp="1619700423950">
+    <state width="1636" height="241" key="GridCell.Tab.1.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1621121586801" />
+    <state width="1636" height="241" key="GridCell.Tab.1.center" timestamp="1621121586801">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.center/0.0.1680.1010@0.0.1680.1010" timestamp="1619700423950" />
-    <state width="1636" height="241" key="GridCell.Tab.1.left" timestamp="1619700423950">
+    <state width="1636" height="241" key="GridCell.Tab.1.center/0.0.1680.1010@0.0.1680.1010" timestamp="1621121586801" />
+    <state width="1636" height="241" key="GridCell.Tab.1.left" timestamp="1621121586801">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.left/0.0.1680.1010@0.0.1680.1010" timestamp="1619700423950" />
-    <state width="1636" height="241" key="GridCell.Tab.1.right" timestamp="1619700423950">
+    <state width="1636" height="241" key="GridCell.Tab.1.left/0.0.1680.1010@0.0.1680.1010" timestamp="1621121586801" />
+    <state width="1636" height="241" key="GridCell.Tab.1.right" timestamp="1621121586801">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.right/0.0.1680.1010@0.0.1680.1010" timestamp="1619700423950" />
+    <state width="1636" height="241" key="GridCell.Tab.1.right/0.0.1680.1010@0.0.1680.1010" timestamp="1621121586801" />
     <state x="681" y="214" key="RollbackChangesDialog" timestamp="1619096912843">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -311,10 +327,10 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="670" y="373" key="VCS.EditChangelistDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1619096968548" />
-    <state x="432" y="237" key="Vcs.Push.Dialog.v2" timestamp="1619650547618">
+    <state x="432" y="237" key="Vcs.Push.Dialog.v2" timestamp="1619703952063">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="432" y="237" key="Vcs.Push.Dialog.v2/0.0.1680.1010@0.0.1680.1010" timestamp="1619650547618" />
+    <state x="432" y="237" key="Vcs.Push.Dialog.v2/0.0.1680.1010@0.0.1680.1010" timestamp="1619703952063" />
     <state x="649" y="421" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1619097295764">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -323,9 +339,9 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="222" y="124" key="new project wizard/0.0.1680.1010@0.0.1680.1010" timestamp="1619699130404" />
-    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup" timestamp="1619703479215">
+    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup" timestamp="1619722352231">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1619703479215" />
+    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1619722352231" />
   </component>
 </project>

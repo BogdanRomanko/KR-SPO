@@ -4,6 +4,7 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Date;
 
 
@@ -72,6 +73,9 @@ public class UI extends JFrame {
         desktopPane.add(getLexerTable());
         desktopPane.add(getPolizFrame());
 
+        /*
+         * Переназначаем стандартный поток ввода данных на консоль
+         */
         TextAreaStreamer ts = new TextAreaStreamer(console);
         console.addKeyListener(ts);
         System.setIn(ts);
@@ -170,6 +174,7 @@ public class UI extends JFrame {
         hidePoliz.addActionListener(hidePoliz());
 
         mExamples[0].addActionListener(viewExample1());
+        mExamples[1].addActionListener(viewExample2());
 
         /*
          * Добавляем все подпункты в пункты меню
@@ -750,6 +755,30 @@ public class UI extends JFrame {
                         "\n" +
                         "    return 0;\n" +
                         "}"
+                );
+            }
+        };
+    }
+
+    /*
+     * Обработчик выбора примера 2 в меню Примеры
+     */
+    private ActionListener viewExample2(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editorTextArea.setText(
+                        "    int main(){\n" +
+                        "        \n" +
+                        "        int a = 5;\n" +
+                        "        if (a < 10){\n" +
+                        "            cout(\"a < 10\");\n" +
+                        "        } else {\n" +
+                        "            cout(\"a > 10\");\n" +
+                        "        }\n" +
+                        "        \n" +
+                        "        return 0;\n" +
+                        "    }"
                 );
             }
         };

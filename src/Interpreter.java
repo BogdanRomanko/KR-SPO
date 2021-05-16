@@ -1,21 +1,43 @@
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
+ * Класс интерпритатора, принимающий ПОЛИЗ программы
+ * и запускающий работу программы
+ */
 public class Interpreter {
 
+    /*
+     * Поле, хранящее ПОЛИЗ для интерпритации
+     */
     private Poliz poliz;
+
+    /*
+     * Списки с переменными
+     */
     private ArrayList<String> varName = new ArrayList <String>();
     private ArrayList<String> varType = new ArrayList <String>();
     private ArrayList<Object> varValue = new ArrayList <Object>();
+
+    /*
+     * Поле со сканером для работы внутри всего интерпритатора
+     */
     private Scanner scanner;
+
+    /*
+     * Счётчик для главного цикла
+     */
     private int count = 0;
 
+    /*
+     * Поле с ссылкой на интерфейс
+     */
     private UI ui;
 
     /*
-     * Конструктор интерпритатора, принимающий полиз и возвращающий
+     * Конструктор интерпритатора, принимающий полиз и ссылку
+     * на интерфейс пользователя для работы с консолью и возвращающий
      * основной экземпляр интерпритатора
      */
     public Interpreter(Poliz poliz, UI ui) {
@@ -36,10 +58,10 @@ public class Interpreter {
     }
 
     /*
-     * главный метод интепритатора, запускающий интерпритацию
+     * Главный метод интепритатора, запускающий интерпритацию
      */
     public void start(){
-        for ( count = 0; count < poliz.getSize() - 1; count++){
+        for (count = 0; count < poliz.getSize() - 1; count++){
             if (poliz.get(count).split(" - ")[0].charAt(0) == 'V')
                 variable(count);
             else if (poliz.get(count).split(" - ")[0].equals("W"))
@@ -47,10 +69,12 @@ public class Interpreter {
             else
                 other(count);
         }
+
+        ui.console.write("--------------\nКонец программы");
     }
 
     /*
-     * метод создания переменных для интепритатора
+     * Метод создания переменных для интепритатора
      */
     private void variable(int index) {
         //если переменная типа int
@@ -87,11 +111,9 @@ public class Interpreter {
             //если значение переменной необходимо считать с консоли
             else {
                 ui.console.write("[INTERPRETER] READ:");
-
                 ui.console.setEditable(true);
                 int temp = scanner.nextInt();
                 ui.console.setEditable(false);
-
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(temp);
                 varType.add("int");
@@ -130,7 +152,9 @@ public class Interpreter {
             //если значение переменной необходимо считать с консоли
             else {
                 ui.console.write("[INTERPRETER] READ:");
+                ui.console.setEditable(true);
                 double temp = scanner.nextDouble();
+                ui.console.setEditable(false);
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(temp);
                 varType.add("double");
@@ -141,38 +165,66 @@ public class Interpreter {
         //если переменная типа string
         else if (poliz.get(index + 1).split(" - ")[0].equals("2")) {
             //если значение переменной уже известно
-            if (!poliz.get(index + 3).split(" - ")[0].contains(",") && !poliz.get(index + 3).split(" - ")[0].contains("R")) {
+            if (!poliz.get(index + 3).split(" - ")[0].contains("R") && poliz.get(index + 3).split(" - ")[0].charAt(0) != 'M') {
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(poliz.get(index + 3).split(" - ")[0]);
+                varValue.add(poliz.get(index + 3).split(" - ")[0].substring(1));
                 varType.add("string");
                 ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
             //если значение переменной предстоит рассчитать
             else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
-                //todo сделать
-                count += 3;
+                if (poliz.get(index + 3).split(" - ")[0].charAt(0) == 'M' && poliz.get(index + 3).split(" - ")[0].charAt(1) == 'A') {
+
+                    poliz.replace(index + 3, poliz.get(index + 3).replaceAll(" \\+ ", " "));
+
+                    //если внутри считаемого значения есть другие переменные
+                    for (int i = 0; i < varName.size(); i++) {
+                        //если встречаем имя существующей переменной
+                        if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
+                            //заменяем имя переменной на её значение
+                            poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                        }
+                    }
+
+                    //ui.console.write("ЭТО БЛЯТЬ КОНКАНТЕНАЦИЯ");
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(poliz.get(index + 3).split(" - ")[0].substring(2));
+                    varType.add("string");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
             }
             //если значение переменной необходимо считать с консоли
             else {
-                System.out.print("[INTERPRETER] READ:");
-                scanner.nextLine();
+                ui.console.write("[INTERPRETER] READ:");
+                ui.console.setEditable(true);
                 String temp = scanner.nextLine();
+                ui.console.setEditable(false);
                 varName.add(poliz.get(index).split(" - ")[0].substring(1));
                 varValue.add(temp);
                 varType.add("string");
-                System.out.println("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                 count += 3;
             }
         }
     }
 
+    /*
+     * Метод, выводящий на консоль сообщение при
+     * вызове метода cout() в программе
+     */
     private void print(int index){
         String print = poliz.get(index + 1).split(" - ")[0];
         ui.console.write("[INTERPRETER] - print: " + print);
         count += 1;
     }
 
+    /*
+     * Метод, который проверяет всё остальное, что не попало в
+     * основные ветки проверок, например, изменение значений
+     * переменных
+     */
     private void other(int index){
         //если происходит мутации переменных
         for (int i = 0; i < varName.size(); i++){
@@ -180,7 +232,7 @@ public class Interpreter {
                 //если значение переменной заранее известно
                 if (poliz.get(index + 1).split(" - ")[0].matches("\\d{1,}")){
                     varValue.set(i, poliz.get(index + 1).split(" - ")[0]);
-                    System.out.println("[INTERPRETER] - " + varType.get(i) + " " + varName.get(i) + " = " + varValue.get(i));
+                    ui.console.write("[INTERPRETER] - " + varType.get(i) + " " + varName.get(i) + " = " + varValue.get(i));
                 }
                 //если значение переменной необходимо вычислить
                 else if (poliz.get(index + 1).split(" - ")[0].contains("[")) {
@@ -202,21 +254,26 @@ public class Interpreter {
                 else if (poliz.get(index + 1).split(" - ")[0].equals("R")){
                     //в зависимости от типа переменной, изменяем её значение
                     if (varType.get(i).equals("int")){
-                        System.out.print("[INTERPRETER] READ:");
+                        ui.console.write("[INTERPRETER] READ:");
+                        ui.console.setEditable(true);
                         int temp = scanner.nextInt();
+                        ui.console.setEditable(false);
                         varValue.set(i, temp);
                     } else if (varType.get(i).equals("double")){
-                        System.out.print("[INTERPRETER] READ:");
+                        ui.console.write("[INTERPRETER] READ:");
+                        ui.console.setEditable(true);
                         double temp = scanner.nextDouble();
+                        ui.console.setEditable(false);
                         varValue.set(i, temp);
                     }
                     else if (varType.get(i).equals("string")){
-                        System.out.print("[INTERPRETER] READ:");
-                        scanner.nextLine();
+                        ui.console.write("[INTERPRETER] READ:");
+                        ui.console.setEditable(true);
                         String temp = scanner.nextLine();
+                        ui.console.setEditable(false);
                         varValue.set(i, temp);
                     }
-                    System.out.println("[INTERPRETER] - " + varType.get(i) + " " + varName.get(i) + " = " + varValue.get(i));
+                    ui.console.write("[INTERPRETER] - " + varType.get(i) + " " + varName.get(i) + " = " + varValue.get(i));
                 }
             }
         }

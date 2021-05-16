@@ -1,16 +1,36 @@
-import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.InputStream;
 
+/*
+ * Класс для перенаправления стандартного потока ввода данных
+ * System.in в консоль интерфейса пользователя
+ */
 class TextAreaStreamer extends InputStream implements KeyListener {
 
-    private Console tf;
+    /*
+     * Поле, хранящее ссылку на консоль в интерфейсе пользователя
+     */
+    private Console console;
+
+    /*
+     * Поле, хранящее текст консоли в интерфейсе пользователя
+     */
     private String str = null;
+
+    /*
+     * Поле, хранящее позицию, с которой необходимо будет начинать
+     * возвращение данных
+     */
     private int pos = 0;
 
-    public TextAreaStreamer(Console jtf) {
-        tf = jtf;
+    /*
+     * Констуктор, инициализирующий консоль интерфейса
+     * пользователя для перенаправления ввода данных
+     * через неё
+     */
+    public TextAreaStreamer(Console console) {
+        this.console = console;
     }
 
     @Override
@@ -18,17 +38,24 @@ class TextAreaStreamer extends InputStream implements KeyListener {
 
     }
 
-    //gets triggered everytime that "Enter" is pressed on the textfield
+    /*
+     * Слушатель, реагирующий на ввод данных в консоль
+     */
     @Override
     public void keyPressed(KeyEvent e) {
+        /*
+         * Проверяем была ли нажата клавиша ENTER
+         */
         if (e.getKeyCode() == KeyEvent.VK_ENTER){
-            int endpos = tf.getCaret().getMark();
-            int startpos = tf.getText().substring(0, endpos-1).lastIndexOf('\n')+1;
-            str = tf.getText() + "\n";
+            /*
+             * Расчитываем позицию, с которой следует начинать
+             * возвращение данных, запоминаем текст из консоли
+             */
+            int endpos = console.getCaret().getMark();
+            int startpos = console.getText().substring(0, endpos-1).lastIndexOf('\n')+1;
+            str = console.getText() + "\n";
             pos = startpos;
             synchronized (this) {
-                //maybe this should only notify() as multiple threads may
-                //be waiting for input and they would now race for input
                 this.notifyAll();
             }
         }
@@ -39,21 +66,22 @@ class TextAreaStreamer extends InputStream implements KeyListener {
 
     }
 
+    /*
+     * Метод, возвращающий индекс символа
+     */
     @Override
     public int read() {
-        //test if the available input has reached its end
-        //and the EOS should be returned 
+        /*
+         * Проверяем закончился ли ввод данных и заканчиваем
+         * его
+         */
         if (str != null && pos == str.length()) {
             str = null;
-            //this is supposed to return -1 on "end of stream"
-            //but I'm having a hard time locating the constant
             return java.io.StreamTokenizer.TT_EOF;
         }
-        //no input available, block until more is available because that's
-        //the behavior specified in the Javadocs
+
         while (str == null || pos >= str.length()) {
             try {
-                //according to the docs read() should block until new input is available
                 synchronized (this) {
                     this.wait();
                 }
@@ -61,7 +89,10 @@ class TextAreaStreamer extends InputStream implements KeyListener {
                 ex.printStackTrace();
             }
         }
-        //read an additional character, return it and increment the index
+        /*
+         * Читаем дополнительный символ, возвращаем его и увеличиваем
+         * позицию
+         */
         return str.charAt(pos++);
     }
 }
