@@ -1194,7 +1194,6 @@ first:
                 if (lexer.text.get(index + 1).equals("=")) {
                     if (lexer.text.get(index - 1).equals(";")) {
                         //если изменяется переменная типа int
-                        System.out.println(varType.get(i));
                         if (varType.get(i).equals("int")) {
                             //если значение переменной явно указано
                             if (lexer.text.get(index + 2).matches("\\d++") && lexer.text.get(index + 3).equals(";")) {
@@ -1205,7 +1204,7 @@ first:
                             }
                             //если значение переменной необходимо вычислить
                             else if (!lexer.text.get(index + 3).equals(";") && !lexer.text.get(index + 2).equals("cin")) {
-                                int j = index;
+                                int j = index + 2;
                                 String math = "";
                                 while (!lexer.text.get(j).equals(";")) {
                                     math += lexer.text.get(j) + " ";
@@ -1257,11 +1256,54 @@ first:
                                     poliz.toPoliz("R");
                                     poliz.toPoliz("=");
                                 }
-                            }
+                            } else
+                                //если изменяется переменная типа string
+                                if (varType.get(i).equals("string")) {
+                                    //если значение переменной явно указано
+                                    if (lexer.text.get(index + 3).matches("\\w") && lexer.text.get(index + 2).equals("\"") && lexer.text.get(index + 4).equals("\"")) {
+                                        varValue.set(i, lexer.text.get(index + 3));
+                                        poliz.toPoliz(varName.get(i));
+                                        poliz.toPoliz("S" + lexer.text.get(index + 3));
+                                        poliz.toPoliz("=");
+                                    }
+                                    //если значение переменной необходимо вычислить
+                                    else if (!lexer.text.get(index + 5).equals(";")) {
+                                        String value = "";
+                                        int j = index + 2;
 
+                                        while (!lexer.text.get(j).equals(";")) {
+                                            value += lexer.text.get(j) + " ";
+                                            j++;
+                                        }
+
+                                        /*
+                                         * Если значение переменной необходимо вычислить
+                                         */
+                                        if (!value.contains("cin")) {
+
+                                            /*
+                                             * Если необходимо склеить две строки
+                                             */
+                                            if (value.contains("+")) {
+                                                poliz.toPoliz(lexer.text.get(index));
+                                                poliz.toPoliz("2");
+                                                poliz.toPoliz("=");
+                                                poliz.toPoliz("MA" + value);
+
+                                                return;
+                                            }
+                                        }
+
+                                    }
+                                    else{
+                                        poliz.toPoliz(varName.get(i));
+                                        poliz.toPoliz("R");
+                                        poliz.toPoliz("=");
+                                    }
+                                }
                     }
-                }
 
+                }
     }
 
     /*

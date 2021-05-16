@@ -25,13 +25,6 @@ public class Poliz {
     }
 
     /*
-     * Метод получения последней записи из ПОЛИЗа
-     */
-    public String getLastItem(){
-        return poliz.pop();
-    }
-
-    /*
      * Метод получения значения на определённом
      * индексе из ПОЛИЗа
      */
@@ -60,13 +53,6 @@ public class Poliz {
     }
 
     /*
-     * Метод, удаляющий запись на определённом индексе
-     */
-    public void removeItemAt(int index){
-        poliz.remove(index);
-    }
-
-    /*
      * Метод получения размера ПОЛИЗа
      */
     public int getSize(){
@@ -83,31 +69,6 @@ public class Poliz {
             all[i] = poliz.get(i);
         }
         return all;
-    }
-
-    /*
-     * Метод, возвращающий количество меток TMP
-     */
-    public int TMPSize(){
-        int count = 0;
-
-        for (String s : (String[]) poliz.toArray()) {
-            if (s.equals("TMP"+count))
-                count++;
-        }
-
-        return count;
-    }
-
-    /*
-     * Метод, заменяющий метки TMP на переданную запись
-     */
-    public void replaceTMP(String token){
-        int index = poliz.indexOf("TMP" + TMPSize());
-        if (index != -1) {
-            poliz.remove(index);
-            poliz.add(index, token);
-        }
     }
 
 }

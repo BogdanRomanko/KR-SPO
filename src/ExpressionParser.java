@@ -2,6 +2,9 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
+/*
+ * Класс для парсинга математических выражений
+ */
 class ExpressionParser {
     private static String operators = "+-*/";
     private static String delimiters = "() " + operators;

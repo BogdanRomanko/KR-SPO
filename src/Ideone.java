@@ -1,6 +1,9 @@
 import java.util.*;
 import java.lang.*;
 
+/*
+ * Класс для математических вычислений
+ */
 class Ideone {
 
     public static Double calc(List<String> postfix) {
