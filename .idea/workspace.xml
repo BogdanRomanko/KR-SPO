@@ -8,19 +8,12 @@
   <component name="ChangeListManager">
     <list default="true" id="d20ee30b-a740-4e15-93be-80f873f386a8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/test/ExpressionParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/ExpressionParser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/test/Ideone.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Ideone.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/test/Interpreter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Interpreter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/test/Poliz.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Poliz.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/test/Syntax.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/Syntax.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/test/TextLineNumber$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/TextLineNumber$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/test/TextLineNumber.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/test/TextLineNumber.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ExpressionParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Ideone.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Ideone.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/InterpreterThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/InterpreterThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Poliz.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Poliz.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Syntax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Syntax.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TextLineNumber.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TextLineNumber.java" afterDir="false" />
     </list>
     <list id="d6c01aee-83ef-4b45-a905-4f785256729f" name="New changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -193,7 +186,14 @@
       <option name="project" value="LOCAL" />
       <updated>1621123225481</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="UI&#10;почти полный функционал, НО никогда не присваивай переменной её же значение. Остались циклы и условия">
+      <created>1621194948284</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1621194948284</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -234,7 +234,8 @@
     <MESSAGE value="Lexer + Syntax + Poliz + Interpreter + UI&#10;какой-то пиздец" />
     <MESSAGE value="UI&#10;Считываение из консоли значений" />
     <MESSAGE value="Комментарии&#10;- полный синтаксический + семантический;&#10;- полный ПОЛИЗ;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Комментарии&#10;- полный синтаксический + семантический;&#10;- полный ПОЛИЗ;" />
+    <MESSAGE value="UI&#10;почти полный функционал, НО никогда не присваивай переменной её же значение. Остались циклы и условия" />
+    <option name="LAST_COMMIT_MESSAGE" value="UI&#10;почти полный функционал, НО никогда не присваивай переменной её же значение. Остались циклы и условия" />
   </component>
   <component name="WindowStateProjectService">
     <state x="294" y="159" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1619096243265">
@@ -253,14 +254,14 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="725" y="391" key="#com.intellij.uiDesigner.palette.ComponentItemDialog.OneOff/0.0.1680.1010@0.0.1680.1010" timestamp="1618170299420" />
-    <state x="494" y="0" key="CommitChangelistDialog2" timestamp="1621194942670">
+    <state x="494" y="0" key="CommitChangelistDialog2" timestamp="1621985603190">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="494" y="0" key="CommitChangelistDialog2/0.0.1680.1010@0.0.1680.1010" timestamp="1621194942670" />
-    <state width="398" height="466" key="DebuggerActiveHint" timestamp="1619106964194">
+    <state x="494" y="0" key="CommitChangelistDialog2/0.0.1680.1010@0.0.1680.1010" timestamp="1621985603190" />
+    <state width="438" height="466" key="DebuggerActiveHint" timestamp="1621985130202">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="398" height="466" key="DebuggerActiveHint/0.0.1680.1010@0.0.1680.1010" timestamp="1619106964194" />
+    <state width="438" height="466" key="DebuggerActiveHint/0.0.1680.1010@0.0.1680.1010" timestamp="1621985130202" />
     <state x="92" y="92" width="1496" height="826" key="DiffContextDialog" timestamp="1619097051536">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -269,38 +270,38 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="619" y="245" key="FileChooserDialogImpl/0.0.1680.1010@0.0.1680.1010" timestamp="1619699128373" />
-    <state width="1636" height="215" key="GridCell.Tab.0.bottom" timestamp="1621194778486">
+    <state width="1636" height="203" key="GridCell.Tab.0.bottom" timestamp="1621985521297">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="215" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1621194778486" />
-    <state width="1636" height="215" key="GridCell.Tab.0.center" timestamp="1621194778486">
+    <state width="1636" height="203" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1621985521297" />
+    <state width="1636" height="203" key="GridCell.Tab.0.center" timestamp="1621985521297">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="215" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1621194778486" />
-    <state width="1636" height="215" key="GridCell.Tab.0.left" timestamp="1621194778486">
+    <state width="1636" height="203" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1621985521297" />
+    <state width="1636" height="203" key="GridCell.Tab.0.left" timestamp="1621985521297">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="215" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1621194778486" />
-    <state width="1636" height="215" key="GridCell.Tab.0.right" timestamp="1621194778486">
+    <state width="1636" height="203" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1621985521297" />
+    <state width="1636" height="203" key="GridCell.Tab.0.right" timestamp="1621985521297">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="215" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1621194778486" />
-    <state width="1636" height="241" key="GridCell.Tab.1.bottom" timestamp="1621125752644">
+    <state width="1636" height="203" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1621985521297" />
+    <state width="1636" height="241" key="GridCell.Tab.1.bottom" timestamp="1621985231762">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1621125752644" />
-    <state width="1636" height="241" key="GridCell.Tab.1.center" timestamp="1621125752644">
+    <state width="1636" height="241" key="GridCell.Tab.1.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1621985231762" />
+    <state width="1636" height="241" key="GridCell.Tab.1.center" timestamp="1621985231762">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.center/0.0.1680.1010@0.0.1680.1010" timestamp="1621125752644" />
-    <state width="1636" height="241" key="GridCell.Tab.1.left" timestamp="1621125752644">
+    <state width="1636" height="241" key="GridCell.Tab.1.center/0.0.1680.1010@0.0.1680.1010" timestamp="1621985231762" />
+    <state width="1636" height="241" key="GridCell.Tab.1.left" timestamp="1621985231762">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.left/0.0.1680.1010@0.0.1680.1010" timestamp="1621125752644" />
-    <state width="1636" height="241" key="GridCell.Tab.1.right" timestamp="1621125752644">
+    <state width="1636" height="241" key="GridCell.Tab.1.left/0.0.1680.1010@0.0.1680.1010" timestamp="1621985231762" />
+    <state width="1636" height="241" key="GridCell.Tab.1.right" timestamp="1621985231762">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1636" height="241" key="GridCell.Tab.1.right/0.0.1680.1010@0.0.1680.1010" timestamp="1621125752644" />
+    <state width="1636" height="241" key="GridCell.Tab.1.right/0.0.1680.1010@0.0.1680.1010" timestamp="1621985231762" />
     <state x="681" y="214" key="RollbackChangesDialog" timestamp="1619096912843">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -313,10 +314,10 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="670" y="373" key="VCS.EditChangelistDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1619096968548" />
-    <state x="432" y="237" key="Vcs.Push.Dialog.v2" timestamp="1621123237509">
+    <state x="432" y="237" key="Vcs.Push.Dialog.v2" timestamp="1621194989497">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="432" y="237" key="Vcs.Push.Dialog.v2/0.0.1680.1010@0.0.1680.1010" timestamp="1621123237509" />
+    <state x="432" y="237" key="Vcs.Push.Dialog.v2/0.0.1680.1010@0.0.1680.1010" timestamp="1621194989497" />
     <state x="649" y="421" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1619097295764">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -325,9 +326,9 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="222" y="124" key="new project wizard/0.0.1680.1010@0.0.1680.1010" timestamp="1619699130404" />
-    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup" timestamp="1619722352231">
+    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup" timestamp="1621212995475">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1619722352231" />
+    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1621212995475" />
   </component>
 </project>

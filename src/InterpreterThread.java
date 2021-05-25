@@ -40,6 +40,8 @@ public class InterpreterThread extends Thread {
             Interpreter interpreter = new Interpreter(syntax.getPoliz(), ui);
             interpreter.start();
         }
+
+        ui.console.write("--------------\nКонец программы");
     }
 
 }

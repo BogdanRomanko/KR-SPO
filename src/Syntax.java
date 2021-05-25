@@ -46,7 +46,7 @@ public class Syntax {
      */
     private UI ui;
 
-    private int count = 0;
+    private int _count = 0;
 
     /*
      * Конструктор класса, инициализирующий поля с лексическим
@@ -87,40 +87,40 @@ public class Syntax {
          * Проходимся по всем лексемам и при совпадении с ключевыми словами
          * проверяем на соответствие конструкций шаблону
          */
-        for (count = 5; count < lexer.text.size(); count++) {
-            switch (lexer.text.get(count)) {
+        for (_count = 5; _count < lexer.text.size(); _count++) {
+            switch (lexer.text.get(_count)) {
                 case "int":
-                    checkInt(count);
+                    checkInt(_count);
                     break;
                 case "double":
-                    checkDouble(count);
+                    checkDouble(_count);
                     break;
                 case "string":
-                    checkString(count);
+                    checkString(_count);
                     break;
                 case "for":
-                    checkFor(count);
+                    checkFor(_count);
                     break;
                 case "if":
-                    checkIf(count);
+                    checkIf(_count);
                     break;
                 case "else":
-                    checkElse(count);
+                    checkElse(_count);
                     break;
                 case ":":
-                    labelsIndex.add(checkLabel(count));
+                    labelsIndex.add(checkLabel(_count));
                     break;
                 case "goto":
-                    checkGoto(count);
+                    checkGoto(_count);
                     break;
                 case "cout":
-                    checkCout(count);
+                    checkCout(_count);
                     break;
                 case "cin":
-                    checkCin(count);
+                    checkCin(_count);
                     break;
                 default:
-                    checkOther(count);
+                    checkOther(_count);
                     break;
             }
 
@@ -130,16 +130,16 @@ public class Syntax {
              * совпадают с текущим состоянием главного цикла
              */
             for (int j = 0; j < parenthesisFor.size(); j++)
-                if (parenthesisFor.get("for" + j).equals(count))
+                if (parenthesisFor.get("for" + j).equals(_count))
                     poliz.toPoliz("!!FOR");
             for (int j = 0; j < parenthesisIf.size(); j++)
-                if (parenthesisIf.get("if" + j).equals(count)) {
+                if (parenthesisIf.get("if" + j).equals(_count)) {
                     poliz.toPoliz("!!IF");
                     int tmp = poliz.find("TMP");
                     poliz.replace(tmp - 1, poliz.getSize() + " - " + poliz.get(tmp - 1).split(" - ")[1]);
                 }
             for (int j = 0; j < parenthesisElse.size(); j++)
-                if (parenthesisElse.get("else" + j).equals(count))
+                if (parenthesisElse.get("else" + j).equals(_count))
                     poliz.toPoliz("!!ELSE");
         }
 
@@ -227,7 +227,7 @@ public class Syntax {
                 varType.add("int");
                 varValue.add(lexer.text.get(index + 3));
 
-                count += 18;
+                _count += 17;
 
                 return;
             }
@@ -422,7 +422,7 @@ public class Syntax {
             varType.add("double");
             varValue.add(lexer.text.get(index + 3));
 
-            count += 18;
+            _count += 17;
             return;
         }
 
@@ -1192,7 +1192,7 @@ first:
         for (int i = 0; i < varName.size(); i++)
             if (varName.get(i).equals(lexer.text.get(index)))
                 if (lexer.text.get(index + 1).equals("=")) {
-                    if (lexer.text.get(index - 1).equals(";")) {
+                    if (lexer.text.get(index - 1).equals(";") || lexer.text.get(index - 1).equals(":")) {
                         //если изменяется переменная типа int
                         if (varType.get(i).equals("int")) {
                             //если значение переменной явно указано
@@ -1236,7 +1236,7 @@ first:
                                 }
                                 //если значение переменной необходимо вычислить
                                 else if (!lexer.text.get(index + 3).equals(";") && !lexer.text.get(index + 2).equals("cin")) {
-                                    int j = index;
+                                    int j = index + 2;
                                     String math = "";
                                     while (!lexer.text.get(j).equals(";")) {
                                         math += lexer.text.get(j) + " ";
@@ -1267,7 +1267,7 @@ first:
                                         poliz.toPoliz("=");
                                     }
                                     //если значение переменной необходимо вычислить
-                                    else if (!lexer.text.get(index + 5).equals(";")) {
+                                    else if (!lexer.text.get(index + 5).equals(";") || lexer.text.get(index + 3).equals(";")) {
                                         String value = "";
                                         int j = index + 2;
 
@@ -1292,14 +1292,25 @@ first:
 
                                                 return;
                                             }
+                                            /*
+                                             * Если принимается значение другой переменной
+                                             */
+                                            else
+                                                for (String var : varName)
+                                                    if (var.equals(lexer.text.get(index + 2))){
+                                                        poliz.toPoliz(lexer.text.get(index));
+                                                        poliz.toPoliz(var);
+                                                        poliz.toPoliz("=");
+                                                    }
                                         }
 
                                     }
-                                    else{
+                                    else if (lexer.text.get(index + 2).equals("cin")){
                                         poliz.toPoliz(varName.get(i));
                                         poliz.toPoliz("R");
                                         poliz.toPoliz("=");
                                     }
+
                                 }
                     }
 

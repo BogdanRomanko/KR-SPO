@@ -71,4 +71,11 @@ public class Poliz {
         return all;
     }
 
+    /*
+     * Метод, удаляющий запись на определённом индексе из ПОЛИЗа
+     */
+    public void remove(int index){
+        poliz.remove(index);
+    }
+
 }
