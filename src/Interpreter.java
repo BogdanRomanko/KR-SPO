@@ -39,6 +39,8 @@ public class Interpreter {
      */
     private UI ui;
 
+    private boolean isInside = false;
+
     /*
      * Конструктор интерпритатора, принимающий полиз и ссылку
      * на интерфейс пользователя для работы с консолью и возвращающий
@@ -60,6 +62,7 @@ public class Interpreter {
         this.varType = varType;
         this.varValue = varValue;
         this.ui = ui;
+        isInside = true;
     }
 
     /*
@@ -258,17 +261,6 @@ public class Interpreter {
 
     /*
      * Метод работы цикла for
-     *
-int main(){
-    int a = 0;
-    for (int i = 0; i < 5; i = i + 1){
-        cout("g");
-        cout("1g");
-    }
-    int b = cin();
-
-    return 0;
-}
      */
     private void loop(int index){
         /*
@@ -285,6 +277,7 @@ int main(){
 
         int countParenthesis = 0;
         int end = 0;
+        int start = 0;
         Poliz loopPoliz = new Poliz();
         for (String line: tempPoliz.getAll()) {
             if (line.split(" - ")[0].equals("!FOR") || line.split(" - ")[0].equals("!IF") || line.split(" - ")[0].equals("!ELSE"))
@@ -293,8 +286,8 @@ int main(){
                 countParenthesis--;
                 end = Integer.parseInt(line.split(" - ")[1]);
             }
-            else if (countParenthesis == 0){
-                int start = Integer.parseInt(tempPoliz.get(0).split(" - ")[1]);
+            if (countParenthesis == 0){
+                start = Integer.parseInt(tempPoliz.get(0).split(" - ")[1]);
                 for (i = 1; i < (end - start); i++){
                     loopPoliz.toPoliz(tempPoliz.get(i).split(" - ")[0]);
                 }
@@ -303,7 +296,6 @@ int main(){
 
         }
 
-        System.out.println(Arrays.toString(loopPoliz.getAll()));
         /*
          * Вырезаем из ПОЛИЗа условие окончание цикла и его шаг
          */
@@ -325,7 +317,7 @@ int main(){
         for (i = 0; i < optionsPoliz.getSize()-1; i++){
             loopPoliz.remove(0);
         }
-        System.out.println(Arrays.toString(loopPoliz.getAll()));
+
         tempPoliz = new Poliz();
         for (String line: loopPoliz.getAll()) {
             tempPoliz.toPoliz(line.split(" - ")[0]);
@@ -354,9 +346,11 @@ int main(){
                 //если меньше числа, а не переменной
                 if (optionsPoliz.get(6).split(" - ")[0].matches("\\d++")) {
                     //цикл
-                    for (counter = Integer.parseInt(optionsPoliz.get(3).split(" - ")[0]); counter < Integer.parseInt(optionsPoliz.get(6).split(" - ")[0])-2; counter++){
+                    for (counter = Integer.parseInt(optionsPoliz.get(3).split(" - ")[0]); counter < Integer.parseInt(optionsPoliz.get(6).split(" - ")[0])-1; counter++){
+                        System.out.println("от " + optionsPoliz.get(3).split(" - ")[0] + " до " + optionsPoliz.get(6).split(" - ")[0]);
                         Interpreter inter = new Interpreter(loopPoliz, this.varName, this.varType, this.varValue, this.ui);
                         inter.start();
+                        count = end + 1;
                     }
                 }
             }
@@ -563,7 +557,6 @@ int main(){
 
 /*
 todo условия
-todo циклы - ДОДЕЛАТЬ
 todo строки не изменяются
  */
 }
