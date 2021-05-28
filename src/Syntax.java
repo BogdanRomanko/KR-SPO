@@ -139,8 +139,11 @@ public class Syntax {
                     poliz.replace(tmp - 1, poliz.getSize() + " - " + poliz.get(tmp - 1).split(" - ")[1]);
                 }
             for (int j = 0; j < parenthesisElse.size(); j++)
-                if (parenthesisElse.get("else" + j).equals(_count))
+                if (parenthesisElse.get("else" + j).equals(_count)) {
                     poliz.toPoliz("!!ELSE");
+                    int tmp = poliz.find("TMP");
+                    poliz.replace(tmp - 1, poliz.getSize() + " - " + poliz.get(tmp - 1).split(" - ")[1]);
+                }
         }
 
         /*
@@ -1072,6 +1075,8 @@ first:
 
             if (notEnd)
                 ui.console.write(Errors.getErrors(19, lexer.line.get(line)));
+
+            poliz.toPoliz("TMP");
         }
     }
 
@@ -1192,7 +1197,7 @@ first:
         for (int i = 0; i < varName.size(); i++)
             if (varName.get(i).equals(lexer.text.get(index)))
                 if (lexer.text.get(index + 1).equals("=")) {
-                    if (lexer.text.get(index - 1).equals(";") || lexer.text.get(index - 1).equals(":")) {
+                    if (lexer.text.get(index - 1).equals(";") || lexer.text.get(index - 1).equals(":") || lexer.text.get(index - 1).equals("{") || lexer.text.get(index - 1).equals("}")) {
                         //если изменяется переменная типа int
                         if (varType.get(i).equals("int")) {
                             //если значение переменной явно указано
@@ -1323,11 +1328,12 @@ first:
      * расчётов
      */
     private String math(String text, int line){
-        String[] tokens = text.replaceAll("\\+", " + ")
-                .replaceAll("-", " - ")
-                .replaceAll("/", " / ")
-                .replaceAll("\\*", " * ")
-                .split(" ");
+        String[] tokens = text.split(" ");
+        for (int i = 0; i < tokens.length; i++)
+            tokens[i] = text.replaceAll("\\+", " + ")
+                    .replaceAll("-", " - ")
+                    .replaceAll("/", " / ")
+                    .replaceAll("\\*", " * ");
 
         for (String s : tokens) {
             if (s.matches("\\w{1,}") && !s.matches("\\d{1,}[.]\\d{1,}|\\d{1,}")){

@@ -176,6 +176,7 @@ public class UI extends JFrame {
         mExamples[0].addActionListener(viewExample1());
         mExamples[1].addActionListener(viewExample2());
         mExamples[2].addActionListener(viewExample3());
+        mExamples[3].addActionListener(viewExample4());
 
         /*
          * Добавляем все подпункты в пункты меню
@@ -805,6 +806,32 @@ public class UI extends JFrame {
                                 "\n" +
                                 "    return 0;\n" +
                                 "}"
+                );
+            }
+        };
+    }
+
+    /*
+     * Обработчик выбора примера 4 в меню Примеры
+     */
+    private ActionListener viewExample4(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editorTextArea.setText(
+                        "int main(){\n" +
+                        "    \n" +
+                        "    int a = 5;\n" +
+                        "    cout(\"Введите b:\");\n" +
+                        "    int b = cin();\n" +
+                        "    if (a > b){\n" +
+                        "        cout(\"a > b\");\n" +
+                        "    } else {\n" +
+                        "        cout(\"b > a\");\n" +
+                        "    }\n" +
+                        "    \n" +
+                        "    return 0;\n" +
+                        "    }"
                 );
             }
         };

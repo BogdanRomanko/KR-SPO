@@ -19,6 +19,13 @@ public class Interpreter {
     private ArrayList<Object> varValue = new ArrayList <Object>();
 
     /*
+     * Временные списки с переменными
+     */
+    private ArrayList<String> TvarName = new ArrayList <String>();
+    private ArrayList<String> TvarType = new ArrayList <String>();
+    private ArrayList<Object> TvarValue = new ArrayList <Object>();
+
+    /*
      * Список меток
      */
     private ArrayList<String> labelName = new ArrayList<String>();
@@ -70,18 +77,20 @@ public class Interpreter {
      */
     public void start(){
         for (count = 0; count < poliz.getSize() - 1; count++){
-            first:
             if (poliz.get(count).split(" - ")[0].charAt(0) == 'V')
                 variable(count);
+            if (poliz.get(count).split(" - ")[0].charAt(0) == 'T')
+                temp_variable(count);
             else if (poliz.get(count).split(" - ")[0].equals("W"))
                 print(count);
             else if (poliz.get(count).split(" - ")[0].charAt(0) == 'L')
                 label(count);
             else if (poliz.get(count).split(" - ")[0].equals("!FOR"))
                 loop(count);
+            else if (poliz.get(count).split(" - ")[0].equals("!FOR"))
+                if_else(count);
             else if (poliz.get(count).split(" - ")[0].charAt(0) == 'G') {
                 goTo(count);
-                break first;
             }
             else
                 other(count);
@@ -93,141 +102,85 @@ public class Interpreter {
      */
     private void variable(int index) {
         //если переменная типа int
-        if (poliz.get(index + 1).split(" - ")[0].equals("0")) {
-            //если значение переменной уже известно
-            if (!poliz.get(index + 3).split(" - ")[0].contains(",") && !poliz.get(index + 3).split(" - ")[0].contains("R")) {
-                //если значение переменной принимается от другой переменной
-                for (String var: varName) {
-                    if (var.equals(poliz.get(index + 3).split(" - ")[0])) {
-                        varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                        varValue.add(varValue.get(varName.indexOf(var)));
-                        varType.add("int");
-                        ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                        count += 3;
-                        return;
+        switch (poliz.get(index + 1).split(" - ")[0]) {
+            case "0":
+                //если значение переменной уже известно
+                if (!poliz.get(index + 3).split(" - ")[0].contains(",") && !poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    //если значение переменной принимается от другой переменной
+                    for (String var : varName) {
+                        if (var.equals(poliz.get(index + 3).split(" - ")[0])) {
+                            varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                            varValue.add(varValue.get(varName.indexOf(var)));
+                            varType.add("int");
+                            ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                            count += 3;
+                            return;
+                        }
                     }
+                    //если значение переменной явно инициализировано
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(Integer.parseInt(poliz.get(index + 3).split(" - ")[0]));
+                    varType.add("int");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
                 }
-                //если значение переменной явно инициализировано
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(Integer.parseInt(poliz.get(index + 3).split(" - ")[0]));
-                varType.add("int");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 3;
-            }
-            //если значение переменной предстоит рассчитать
-            else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
-                //если внутри считаемого значения есть другие переменные
-                for (int i = 0; i < varName.size(); i++){
-                    //если встречаем имя существующей переменной
-                    if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))){
-                        //проверяем является ли переменная нужного нам типа
-                        if (!varType.get(i).equals("int"))
-                            Errors.errors(7);
-                        //заменяем имя переменной на её значение
-                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                //если значение переменной предстоит рассчитать
+                else if (!poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    //если внутри считаемого значения есть другие переменные
+                    for (int i = 0; i < varName.size(); i++) {
+                        //если встречаем имя существующей переменной
+                        if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
+                            //проверяем является ли переменная нужного нам типа
+                            if (!varType.get(i).equals("int"))
+                                Errors.errors(7);
+                            //заменяем имя переменной на её значение
+                            poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                        }
                     }
-                }
 
-                List<String> expression = StrToListStr(poliz.get(index + 3));
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
-                varType.add("int");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 3;
-            }
-            //если значение переменной необходимо считать с консоли
-            else {
-                ui.console.write("[INTERPRETER] READ:");
-                ui.console.setEditable(true);
-                int temp = scanner.nextInt();
-                ui.console.setEditable(false);
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(temp);
-                varType.add("int");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 3;
-            }
-        }
-        //если переменная типа double
-        else if (poliz.get(index + 1).split(" - ")[0].equals("1")) {
-            //если значение переменной уже известно
-            if (!poliz.get(index + 3).split(" - ")[0].contains(",") && !poliz.get(index + 3).split(" - ")[0].contains("R")){
-                //если значение переменной принимается от другой переменной
-                for (String var: varName) {
-                    if (var.equals(poliz.get(index + 3).split(" - ")[0])) {
-                        varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                        varValue.add(varValue.get(varName.indexOf(var)));
-                        varType.add("double");
-                        ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                        count += 3;
-                        return;
-                    }
+                    List<String> expression = StrToListStr(poliz.get(index + 3));
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
+                    varType.add("int");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
                 }
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(Double.parseDouble(poliz.get(index + 3).split(" - ")[0]));
-                varType.add("double");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 3;
-            }
-            //если значение переменной предстоит рассчитать
-            else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
-                //если внутри считаемого значения есть другие переменные
-                for (int i = 0; i < varName.size(); i++){
-                    //если встречаем имя существующей переменной
-                    if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))){
-                        //заменяем имя переменной на её значение
-                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
-                    }
+                //если значение переменной необходимо считать с консоли
+                else {
+                    ui.console.write("[INTERPRETER] READ:");
+                    ui.console.setEditable(true);
+                    int temp = scanner.nextInt();
+                    ui.console.setEditable(false);
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(temp);
+                    varType.add("int");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
                 }
-
-                List<String> expression = StrToListStr(poliz.get(index + 3));
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(Double.parseDouble(Ideone.calc(expression).toString()));
-                varType.add("double");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 3;
-            }
-            //если значение переменной необходимо считать с консоли
-            else {
-                ui.console.write("[INTERPRETER] READ:");
-                ui.console.setEditable(true);
-                double temp = scanner.nextDouble();
-                ui.console.setEditable(false);
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(temp);
-                varType.add("double");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 3;
-            }
-        }
-        //если переменная типа string
-        else if (poliz.get(index + 1).split(" - ")[0].equals("2")) {
-            //если значение переменной уже известно
-            if (!poliz.get(index + 3).split(" - ")[0].contains("R") && poliz.get(index + 3).split(" - ")[0].charAt(0) != 'M') {
-                for (String var: varName) {
-                    if (var.equals(poliz.get(index + 3).split(" - ")[0].substring(1)) && varType.get(varName.indexOf(var)).equals("string")) {
-                        varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                        varValue.add(varValue.get(varName.indexOf(var)));
-                        varType.add("string");
-                        ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                        count += 2;
-                        return;
+                break;
+            //если переменная типа double
+            case "1":
+                //если значение переменной уже известно
+                if (!poliz.get(index + 3).split(" - ")[0].contains(",") && !poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    //если значение переменной принимается от другой переменной
+                    for (String var : varName) {
+                        if (var.equals(poliz.get(index + 3).split(" - ")[0])) {
+                            varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                            varValue.add(varValue.get(varName.indexOf(var)));
+                            varType.add("double");
+                            ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                            count += 3;
+                            return;
+                        }
                     }
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(Double.parseDouble(poliz.get(index + 3).split(" - ")[0]));
+                    varType.add("double");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
                 }
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(poliz.get(index + 3).split(" - ")[0].substring(1));
-                varType.add("string");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 2;
-            }
-            //если значение переменной предстоит рассчитать
-            else if (!poliz.get(index + 3).split(" - ")[0].contains("R")){
-                if (poliz.get(index + 3).split(" - ")[0].charAt(0) == 'M' && poliz.get(index + 3).split(" - ")[0].charAt(1) == 'A') {
-
-                    poliz.replace(index + 3, poliz.get(index + 3).replaceAll(" \\+ ", ""));
-                    poliz.replace(index + 3, poliz.get(index + 3).replaceAll("\"", ""));
-                    poliz.replace(index + 3, poliz.get(index + 3).substring(1));
-
+                //если значение переменной предстоит рассчитать
+                else if (!poliz.get(index + 3).split(" - ")[0].contains("R")) {
                     //если внутри считаемого значения есть другие переменные
                     for (int i = 0; i < varName.size(); i++) {
                         //если встречаем имя существующей переменной
@@ -237,25 +190,270 @@ public class Interpreter {
                         }
                     }
 
+                    List<String> expression = StrToListStr(poliz.get(index + 3));
                     varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                    varValue.add(poliz.get(index + 3).split(" - ")[0].substring(2));
+                    varValue.add(Double.parseDouble(Ideone.calc(expression).toString()));
+                    varType.add("double");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
+                //если значение переменной необходимо считать с консоли
+                else {
+                    ui.console.write("[INTERPRETER] READ:");
+                    ui.console.setEditable(true);
+                    double temp = scanner.nextDouble();
+                    ui.console.setEditable(false);
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(temp);
+                    varType.add("double");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
+                break;
+            //если переменная типа string
+            case "2":
+                //если значение переменной уже известно
+                if (!poliz.get(index + 3).split(" - ")[0].contains("R") && poliz.get(index + 3).split(" - ")[0].charAt(0) != 'M') {
+                    for (String var : varName) {
+                        if (var.equals(poliz.get(index + 3).split(" - ")[0].substring(1)) && varType.get(varName.indexOf(var)).equals("string")) {
+                            varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                            varValue.add(varValue.get(varName.indexOf(var)));
+                            varType.add("string");
+                            ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                            count += 2;
+                            return;
+                        }
+                    }
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(poliz.get(index + 3).split(" - ")[0].substring(1));
                     varType.add("string");
                     ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                     count += 2;
                 }
-            }
-            //если значение переменной необходимо считать с консоли
-            else {
-                ui.console.write("[INTERPRETER] READ:");
-                ui.console.setEditable(true);
-                String temp = scanner.nextLine();
-                ui.console.setEditable(false);
-                varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                varValue.add(temp);
-                varType.add("string");
-                ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
-                count += 2;
-            }
+                //если значение переменной предстоит рассчитать
+                else if (!poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    if (poliz.get(index + 3).split(" - ")[0].charAt(0) == 'M' && poliz.get(index + 3).split(" - ")[0].charAt(1) == 'A') {
+
+                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll(" \\+ ", ""));
+                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll("\"", ""));
+                        poliz.replace(index + 3, poliz.get(index + 3).substring(1));
+
+                        //если внутри считаемого значения есть другие переменные
+                        for (int i = 0; i < varName.size(); i++) {
+                            //если встречаем имя существующей переменной
+                            if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
+                                //заменяем имя переменной на её значение
+                                poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                            }
+                        }
+
+                        varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                        varValue.add(poliz.get(index + 3).split(" - ")[0].substring(2));
+                        varType.add("string");
+                        ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                        count += 2;
+                    }
+                }
+                //если значение переменной необходимо считать с консоли
+                else {
+                    ui.console.write("[INTERPRETER] READ:");
+                    ui.console.setEditable(true);
+                    String temp = scanner.nextLine();
+                    ui.console.setEditable(false);
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(temp);
+                    varType.add("string");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 2;
+                }
+                break;
+        }
+    }
+
+    /*
+     * Метод создания временных переменных
+     */
+    private void temp_variable(int index){
+        //если переменная типа int
+        switch (poliz.get(index + 1).split(" - ")[0]) {
+            case "0":
+                //если значение переменной уже известно
+                if (!poliz.get(index + 3).split(" - ")[0].contains(",") && !poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    //если значение переменной принимается от другой переменной
+                    for (String var : varName) {
+                        if (var.equals(poliz.get(index + 3).split(" - ")[0])) {
+                            TvarName.add(poliz.get(index).split(" - ")[0].substring(1));
+                            TvarValue.add(varValue.get(varName.indexOf(var)));
+                            TvarType.add("int");
+                            ui.console.write("[INTERPRETER] - " + TvarType.get(TvarType.size() - 1) + " " + TvarName.get(TvarName.size() - 1) + " = " + TvarValue.get(TvarValue.size() - 1));
+                            count += 3;
+                            return;
+                        }
+                    }
+
+                    //если значение переменной принимается от другой временной переменной
+                    for (String var : TvarName) {
+                        if (var.equals(poliz.get(index + 3).split(" - ")[0])) {
+                            TvarName.add(poliz.get(index).split(" - ")[0].substring(1));
+                            TvarValue.add(TvarValue.get(TvarName.indexOf(var)));
+                            TvarType.add("int");
+                            ui.console.write("[INTERPRETER] - " + TvarType.get(TvarType.size() - 1) + " " + TvarName.get(TvarName.size() - 1) + " = " + TvarValue.get(TvarValue.size() - 1));
+                            count += 3;
+                            return;
+                        }
+                    }
+
+                    //если значение переменной явно инициализировано
+                    TvarName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    TvarValue.add(Integer.parseInt(poliz.get(index + 3).split(" - ")[0]));
+                    TvarType.add("int");
+                    ui.console.write("[INTERPRETER] - " + TvarType.get(TvarType.size() - 1) + " " + TvarName.get(TvarName.size() - 1) + " = " + TvarValue.get(TvarValue.size() - 1));
+                    count += 3;
+                    //--------------------------------------------------------------
+                }
+                //если значение переменной предстоит рассчитать
+                else if (!poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    //если внутри считаемого значения есть другие переменные
+                    for (int i = 0; i < varName.size(); i++) {
+                        //если встречаем имя существующей переменной
+                        if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
+                            //проверяем является ли переменная нужного нам типа
+                            if (!varType.get(i).equals("int"))
+                                Errors.errors(7);
+                            //заменяем имя переменной на её значение
+                            poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                        }
+                    }
+
+                    List<String> expression = StrToListStr(poliz.get(index + 3));
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
+                    varType.add("int");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
+                //если значение переменной необходимо считать с консоли
+                else {
+                    ui.console.write("[INTERPRETER] READ:");
+                    ui.console.setEditable(true);
+                    int temp = scanner.nextInt();
+                    ui.console.setEditable(false);
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(temp);
+                    varType.add("int");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
+                break;
+            //если переменная типа double
+            case "1":
+                //если значение переменной уже известно
+                if (!poliz.get(index + 3).split(" - ")[0].contains(",") && !poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    //если значение переменной принимается от другой переменной
+                    for (String var : varName) {
+                        if (var.equals(poliz.get(index + 3).split(" - ")[0])) {
+                            varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                            varValue.add(varValue.get(varName.indexOf(var)));
+                            varType.add("double");
+                            ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                            count += 3;
+                            return;
+                        }
+                    }
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(Double.parseDouble(poliz.get(index + 3).split(" - ")[0]));
+                    varType.add("double");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
+                //если значение переменной предстоит рассчитать
+                else if (!poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    //если внутри считаемого значения есть другие переменные
+                    for (int i = 0; i < varName.size(); i++) {
+                        //если встречаем имя существующей переменной
+                        if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
+                            //заменяем имя переменной на её значение
+                            poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                        }
+                    }
+
+                    List<String> expression = StrToListStr(poliz.get(index + 3));
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(Double.parseDouble(Ideone.calc(expression).toString()));
+                    varType.add("double");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
+                //если значение переменной необходимо считать с консоли
+                else {
+                    ui.console.write("[INTERPRETER] READ:");
+                    ui.console.setEditable(true);
+                    double temp = scanner.nextDouble();
+                    ui.console.setEditable(false);
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(temp);
+                    varType.add("double");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 3;
+                }
+                break;
+            //если переменная типа string
+            case "2":
+                //если значение переменной уже известно
+                if (!poliz.get(index + 3).split(" - ")[0].contains("R") && poliz.get(index + 3).split(" - ")[0].charAt(0) != 'M') {
+                    for (String var : varName) {
+                        if (var.equals(poliz.get(index + 3).split(" - ")[0].substring(1)) && varType.get(varName.indexOf(var)).equals("string")) {
+                            varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                            varValue.add(varValue.get(varName.indexOf(var)));
+                            varType.add("string");
+                            ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                            count += 2;
+                            return;
+                        }
+                    }
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(poliz.get(index + 3).split(" - ")[0].substring(1));
+                    varType.add("string");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 2;
+                }
+                //если значение переменной предстоит рассчитать
+                else if (!poliz.get(index + 3).split(" - ")[0].contains("R")) {
+                    if (poliz.get(index + 3).split(" - ")[0].charAt(0) == 'M' && poliz.get(index + 3).split(" - ")[0].charAt(1) == 'A') {
+
+                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll(" \\+ ", ""));
+                        poliz.replace(index + 3, poliz.get(index + 3).replaceAll("\"", ""));
+                        poliz.replace(index + 3, poliz.get(index + 3).substring(1));
+
+                        //если внутри считаемого значения есть другие переменные
+                        for (int i = 0; i < varName.size(); i++) {
+                            //если встречаем имя существующей переменной
+                            if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
+                                //заменяем имя переменной на её значение
+                                poliz.replace(index + 3, poliz.get(index + 3).replaceAll(varName.get(i), varValue.get(i).toString()));
+                            }
+                        }
+
+                        varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                        varValue.add(poliz.get(index + 3).split(" - ")[0].substring(2));
+                        varType.add("string");
+                        ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                        count += 2;
+                    }
+                }
+                //если значение переменной необходимо считать с консоли
+                else {
+                    ui.console.write("[INTERPRETER] READ:");
+                    ui.console.setEditable(true);
+                    String temp = scanner.nextLine();
+                    ui.console.setEditable(false);
+                    varName.add(poliz.get(index).split(" - ")[0].substring(1));
+                    varValue.add(temp);
+                    varType.add("string");
+                    ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
+                    count += 2;
+                }
+                break;
         }
     }
 
@@ -335,9 +533,6 @@ public class Interpreter {
                 loopPoliz.replace(i, tempPoliz.get(i-2).split(" - ")[0] + " - " + (i+1));
         }
 
-        System.out.println(Arrays.toString(optionsPoliz.getAll()));
-        System.out.println(Arrays.toString(loopPoliz.getAll()));
-
         // меньше
         if (optionsPoliz.get(5).split(" - ")[0].equals("<")){
             // если переменная типа инт
@@ -346,16 +541,33 @@ public class Interpreter {
                 //если меньше числа, а не переменной
                 if (optionsPoliz.get(6).split(" - ")[0].matches("\\d++")) {
                     //цикл
-                    for (counter = Integer.parseInt(optionsPoliz.get(3).split(" - ")[0]); counter < Integer.parseInt(optionsPoliz.get(6).split(" - ")[0])-1; counter++){
-                        System.out.println("от " + optionsPoliz.get(3).split(" - ")[0] + " до " + optionsPoliz.get(6).split(" - ")[0]);
+                    for (counter = Integer.parseInt(optionsPoliz.get(3).split(" - ")[0]); counter < Integer.parseInt(optionsPoliz.get(6).split(" - ")[0]); counter++){
+                        varName.add(optionsPoliz.get(0).split(" - ")[0].substring(1));
+                        varType.add("int");
+                        varValue.add(counter);
+
                         Interpreter inter = new Interpreter(loopPoliz, this.varName, this.varType, this.varValue, this.ui);
                         inter.start();
-                        count = end + 1;
+                        this.checkChangeVarValue(inter);
+
+                        int coords = varName.indexOf(optionsPoliz.get(0).split(" - ")[0].substring(1));
+                        varName.remove(coords);
+                        varValue.remove(coords);
+                        varType.remove(coords);
                     }
                 }
             }
         }
 
+        count += 12 + loopPoliz.getSize()-1;
+
+    }
+
+    /*
+     * Метод работы условия if и else
+     */
+    private void if_else(int index){
+        
     }
 
     /*
@@ -408,8 +620,9 @@ public class Interpreter {
                 if (poliz.get(index + 1).split(" - ")[0].contains("[")) {
                     //в зависимости от типа переменной, изменяем её значение
                     if (varType.get(i).equals("int")){
-
+                        String tempVarValue = "";
                         //если внутри считаемого значения есть другие переменные
+                        tempVarValue = poliz.get(index + 1);
                         for (int j = 0; j < varName.size(); j++){
                             //если встречаем имя существующей переменной
                             if (poliz.get(index + 1).split(" - ")[0].contains(varName.get(j))){
@@ -421,11 +634,12 @@ public class Interpreter {
                                     return;
                                 }
                                 //заменяем имя переменной на её значение
-                                poliz.replace(index + 1, poliz.get(index + 1).replaceAll(varName.get(j), varValue.get(j).toString()));
+                                tempVarValue = tempVarValue.replaceAll(varName.get(j), varValue.get(j).toString());
+
                             }
                         }
 
-                        List<String> expression = StrToListStr(poliz.get(index + 1));
+                        List<String> expression = StrToListStr(tempVarValue);
                         varValue.set(i, (int) Double.parseDouble(Ideone.calc(expression).toString()));
                         ui.console.write("[INTERPRETER] - " + varType.get(i) + " " + varName.get(i) + " = " + varValue.get(i));
                         count += 2;
@@ -553,6 +767,17 @@ public class Interpreter {
         }
 
         return result;
+    }
+
+    /*
+     * Метод проверки изменения переменных в циклах
+     */
+    private void checkChangeVarValue(Interpreter interpreter){
+        for (int i = 0; i < this.varName.size(); i++)
+            for (int j = 0; j < interpreter.varName.size(); j++)
+                if (this.varName.get(i).equals(interpreter.varName.get(j)))
+                    this.varValue.set(i, interpreter.varValue.get(j));
+
     }
 
 /*
