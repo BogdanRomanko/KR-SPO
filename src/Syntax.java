@@ -136,13 +136,13 @@ public class Syntax {
                 if (parenthesisIf.get("if" + j).equals(_count)) {
                     poliz.toPoliz("!!IF");
                     int tmp = poliz.find("TMP");
-                    poliz.replace(tmp - 1, poliz.getSize() + " - " + poliz.get(tmp - 1).split(" - ")[1]);
+                    poliz.replace(tmp - 1, (poliz.getSize() - Integer.parseInt(poliz.get(tmp - 1).split(" - ")[1])) + " - " + poliz.get(tmp - 1).split(" - ")[1]);
                 }
             for (int j = 0; j < parenthesisElse.size(); j++)
                 if (parenthesisElse.get("else" + j).equals(_count)) {
                     poliz.toPoliz("!!ELSE");
                     int tmp = poliz.find("TMP");
-                    poliz.replace(tmp - 1, poliz.getSize() + " - " + poliz.get(tmp - 1).split(" - ")[1]);
+                    poliz.replace(tmp - 1, (poliz.getSize() - Integer.parseInt(poliz.get(tmp - 1).split(" - ")[1])) + " - " + poliz.get(tmp - 1).split(" - ")[1]);
                 }
         }
 

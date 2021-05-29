@@ -69,6 +69,15 @@ public class Errors {
     }
 
     /*
+     * Метод, увеличивающий счётчик ошибок и возвращающий
+     * ошибку, строку с ошибкой
+     */
+    public static String getErrors(int error){
+        count++;
+        return "[ОШИБКА] - " + errors[error];
+    }
+
+    /*
      * Метод проверки есть ли хоть одна ошибка
      */
     public static boolean isErrors(){
