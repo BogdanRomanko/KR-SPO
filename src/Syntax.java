@@ -987,7 +987,18 @@ public class Syntax {
             int i = index + 2;
             String expression = "";
 
-            while (!lexer.text.get(i).equals(")")) {
+            int parenthesis = 1;
+
+            while (true){
+                if (lexer.text.get(i).equals("("))
+                    parenthesis++;
+
+                if (lexer.text.get(i).equals(")"))
+                    parenthesis--;
+
+                if (parenthesis == 0)
+                    break;
+
                 if (lexer.line.get(i) != line)
                     ui.console.write(Errors.getErrors(14, lexer.line.get(i)));
                 expression += lexer.text.get(i) + " ";
@@ -1265,7 +1276,7 @@ first:
                                 //если изменяется переменная типа string
                                 if (varType.get(i).equals("string")) {
                                     //если значение переменной явно указано
-                                    if (lexer.text.get(index + 3).matches("\\w") && lexer.text.get(index + 2).equals("\"") && lexer.text.get(index + 4).equals("\"")) {
+                                    if (lexer.text.get(index + 3).matches("\\w++") && lexer.text.get(index + 2).equals("\"") && lexer.text.get(index + 4).equals("\"")) {
                                         varValue.set(i, lexer.text.get(index + 3));
                                         poliz.toPoliz(varName.get(i));
                                         poliz.toPoliz("S" + lexer.text.get(index + 3));

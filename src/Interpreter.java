@@ -42,6 +42,11 @@ public class Interpreter {
     private int count = 0;
 
     /*
+     * Переменная для результата последнего if
+     */
+    private boolean lastIf = false;
+
+    /*
      * Поле с ссылкой на интерфейс
      */
     private UI ui;
@@ -72,7 +77,7 @@ public class Interpreter {
     /*
      * Главный метод интепритатора, запускающий интерпритацию
      */
-    public void start(){
+    public void start() {
         for (count = 0; count < poliz.getSize() - 1; count++){
             if (poliz.get(count).split(" - ")[0].charAt(0) == 'V')
                 variable(count);
@@ -84,7 +89,9 @@ public class Interpreter {
                 label(count);
             else if (poliz.get(count).split(" - ")[0].equals("!FOR"))
                 loop(count);
-            else if (poliz.get(count).split(" - ")[0].equals("!FOR"))
+            else if (poliz.get(count).split(" - ")[0].equals("!IF"))
+                if_else(count);
+            else if (poliz.get(count).split(" - ")[0].equals("!ELSE"))
                 if_else(count);
             else if (poliz.get(count).split(" - ")[0].charAt(0) == 'G') {
                 goTo(count);
@@ -341,7 +348,7 @@ public class Interpreter {
     /*
      * Метод работы цикла for
      */
-    private void loop(int index){
+    private void loop(int index) {
         /*
          * Вырезаем ПОЛИЗ всего, что происходит в цикле
          */
@@ -504,8 +511,135 @@ public class Interpreter {
     /*
      * Метод работы условия if и else
      */
-    private void if_else(int index){
-        
+    private void if_else(int index) {
+        if (poliz.get(index).split(" - ")[0].equals("!IF")){
+            String expression = poliz.get(index + 1).split(" - ")[0];
+            expression = expression.replaceAll("[|]", "or");
+            String[] expressions = new String[0];
+            boolean[] boolRes;
+            boolean result = false;
+
+            expressions = expression.split("oror");
+
+            if (expressions.length == 1){
+                expressions = expression.split("&&");
+                if (expressions.length == 1){
+                    if (expression.charAt(0) == '!'){
+                        boolRes = new boolean[1];
+                        boolRes[0] = !logical(expression.substring(3, expression.length()-2));
+                        ui.console.write("[INTERPRETER] - " + boolRes[0]);
+                    }else {
+                        result = logical(expression);
+                        ui.console.write("[INTERPRETER] - " + result);
+                    }
+                } else {
+                     {
+                        boolRes = new boolean[expressions.length];
+                        for (int i = 0; i < expressions.length; i++)
+                            boolRes[i] = logical(expressions[i]);
+
+                        result = boolRes[0];
+                        for (int i = 1; i < boolRes.length; i++){
+                            result = result && boolRes[i];
+                        }
+                         ui.console.write("[INTERPRETER] - " + result);
+                    }
+                }
+            } else {
+                boolRes = new boolean[expressions.length];
+                for (int i = 0; i < expressions.length; i++)
+                    boolRes[i] = logical(expressions[i]);
+
+                result = boolRes[0];
+                for (int i = 1; i < boolRes.length; i++){
+                    result = result || boolRes[i];
+                }
+                ui.console.write("[INTERPRETER] - " + result);
+            }
+
+            lastIf = result;
+
+            if (!result){
+                count += Integer.parseInt(poliz.get(index + 2).split(" - ")[0]);
+            }
+        } else if (poliz.get(index).split(" - ")[0].equals("!ELSE")){
+            if (lastIf)
+                count += Integer.parseInt(poliz.get(index + 1).split(" - ")[0]);
+        }
+    }
+
+    /*
+     * Метод для рачитывания результата булева выражения
+     */
+    private boolean logical(String expression){
+        expression = expression.replaceAll(" ", "");
+
+        boolean result = false;
+        ArrayList<String> varTypes = new ArrayList<>();
+
+        for (int i = 0; i < varName.size(); i++) {
+            if (expression.contains(varName.get(i))) {
+                expression = expression.replaceAll(varName.get(i), varValue.get(i).toString());
+                varTypes.add(varType.get(i));
+            }
+        }
+
+        if (expression.contains("<") && !expression.contains("=")){
+            if (varTypes.get(0).equals("int") || varTypes.get(1).equals("int")){
+                return (Integer.parseInt(expression.split("<")[0]) < Integer.parseInt(expression.split("<")[1]));
+            } else if (varTypes.get(0).equals("double") || varTypes.get(1).equals("double")){
+                return (Double.parseDouble(expression.split("<")[0]) < Double.parseDouble((expression.split("<")[1])));
+            } else {
+                ui.console.write(Errors.getErrors(27));
+            }
+        }
+        else if (expression.contains(">") && !expression.contains("=")){
+            if (varTypes.get(0).equals("int") || varTypes.get(1).equals("int")){
+                return (Integer.parseInt(expression.split(">")[0]) > Integer.parseInt(expression.split(">")[1]));
+            } else if (varTypes.get(0).equals("double") || varTypes.get(1).equals("double")){
+                return (Double.parseDouble(expression.split(">")[0]) > Double.parseDouble((expression.split(">")[1])));
+            } else {
+                ui.console.write(Errors.getErrors(27));
+            }
+        }
+        else if (expression.contains("<=")){
+            if (varTypes.get(0).equals("int") || varTypes.get(1).equals("int")){
+                return (Integer.parseInt(expression.split("<=")[0]) <= Integer.parseInt(expression.split("<=")[1]));
+            } else if (varTypes.get(0).equals("double") || varTypes.get(1).equals("double")){
+                return (Double.parseDouble(expression.split("<=")[0]) <= Double.parseDouble((expression.split("<=")[1])));
+            } else {
+                ui.console.write(Errors.getErrors(27));
+            }
+        }
+        else if (expression.contains(">=")){
+            if (varTypes.get(0).equals("int") || varTypes.get(1).equals("int")){
+                return (Integer.parseInt(expression.split(">=")[0]) >= Integer.parseInt(expression.split(">=")[1]));
+            } else if (varTypes.get(0).equals("double") || varTypes.get(1).equals("double")){
+                return (Double.parseDouble(expression.split(">=")[0]) >= Double.parseDouble((expression.split(">=")[1])));
+            } else {
+                ui.console.write(Errors.getErrors(27));
+            }
+        }
+        else if (expression.contains("==")){
+            if (varTypes.get(0).equals("int") || varTypes.get(1).equals("int")){
+                return (Integer.parseInt(expression.split("==")[0]) == Integer.parseInt(expression.split("==")[1]));
+            } else if (varTypes.get(0).equals("double") || varTypes.get(1).equals("double")){
+                return (Double.parseDouble(expression.split("==")[0]) == Double.parseDouble((expression.split("==")[1])));
+            } else {
+                ui.console.write(Errors.getErrors(27));
+            }
+        }
+        else if (expression.contains("!=")){
+            if (varTypes.get(0).equals("int") || varTypes.get(1).equals("int")){
+                return (Integer.parseInt(expression.split("!=")[0]) != Integer.parseInt(expression.split("!=")[1]));
+            } else if (varTypes.get(0).equals("double") || varTypes.get(1).equals("double")){
+                return (Double.parseDouble(expression.split("!=")[0]) != Double.parseDouble((expression.split("!=")[1])));
+            } else {
+                ui.console.write(Errors.getErrors(27));
+            }
+        }
+
+        return result;
     }
 
     /*
@@ -720,8 +854,4 @@ public class Interpreter {
 
     }
 
-/*
-todo условия
-todo строки не изменяются
- */
 }

@@ -820,18 +820,17 @@ public class UI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 editorTextArea.setText(
                         "int main(){\n" +
-                        "    \n" +
-                        "    int a = 5;\n" +
-                        "    cout(\"Введите b:\");\n" +
-                        "    int b = cin();\n" +
-                        "    if (a > b){\n" +
-                        "        cout(\"a > b\");\n" +
-                        "    } else {\n" +
-                        "        cout(\"b > a\");\n" +
-                        "    }\n" +
-                        "    \n" +
-                        "    return 0;\n" +
-                        "    }"
+                                "    \n" +
+                                "    int a = 5;\n" +
+                                "    int b = 1;\n" +
+                                "    if (a > b || a <= b){\n" +
+                                "        cout(\"a > b\");\n" +
+                                "    } else {\n" +
+                                "        cout(\"b > a\");\n" +
+                                "    }\n" +
+                                "    \n" +
+                                "    return 0;\n" +
+                                "    }"
                 );
             }
         };
