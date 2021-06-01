@@ -4,15 +4,16 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Arrays;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
-
 
 /*
  * Класс с визуальным интерфейсом пользователя
  */
 public class UI extends JFrame {
     private String fileName = "";
+    private String copy_text = "";
 
     private JInternalFrame editor;
     private JInternalFrame lexer;
@@ -20,6 +21,9 @@ public class UI extends JFrame {
     private JInternalFrame poliz;
 
     public Console console;
+
+    private JScrollPane consolePanel;
+
     public JTextArea lexerArea = new JTextArea();
     public JTextArea lexerTableArea = new JTextArea();
     public JTextArea polizArea = new JTextArea();
@@ -31,6 +35,8 @@ public class UI extends JFrame {
      */
     private final JLabel StatusL = new JLabel("Статус");
     private final JLabel StatusTime = new JLabel("");
+
+    private JFrame helpFrame;
 
     /*
      * Констуктор создания визуального интерфейса пользователя
@@ -163,20 +169,24 @@ public class UI extends JFrame {
         save.addActionListener(saveFileAction());
         newFile.addActionListener(newFileAction());
 
-        viewEditor.addActionListener(viewEditor());
-        viewLexer.addActionListener(viewLexer());
-        viewLexerTable.addActionListener(viewLexerTable());
-        viewPoliz.addActionListener(viewPoliz());
+        viewEditor.addActionListener(viewEditorAction());
+        viewLexer.addActionListener(viewLexerAction());
+        viewLexerTable.addActionListener(viewLexerTableAction());
+        viewPoliz.addActionListener(viewPolizAction());
 
-        hideEditor.addActionListener(hideEditor());
-        hideLexer.addActionListener(hideLexer());
-        hideLexerTable.addActionListener(hideLexerTable());
-        hidePoliz.addActionListener(hidePoliz());
+        hideEditor.addActionListener(hideEditorAction());
+        hideLexer.addActionListener(hideLexerAction());
+        hideLexerTable.addActionListener(hideLexerTableAction());
+        hidePoliz.addActionListener(hidePolizAction());
 
-        mExamples[0].addActionListener(viewExample1());
-        mExamples[1].addActionListener(viewExample2());
-        mExamples[2].addActionListener(viewExample3());
-        mExamples[3].addActionListener(viewExample4());
+        mExamples[0].addActionListener(viewExample1Action());
+        mExamples[1].addActionListener(viewExample2Action());
+        mExamples[2].addActionListener(viewExample3Action());
+        mExamples[3].addActionListener(viewExample4Action());
+        mExamples[4].addActionListener(viewExample5Action());
+
+        help.addActionListener(viewHelpFrameAction());
+        mAbout.addActionListener(infoAction());
 
         /*
          * Добавляем все подпункты в пункты меню
@@ -259,22 +269,40 @@ public class UI extends JFrame {
     private JToolBar getToolBar(){
         JToolBar toolBar = new JToolBar();
 
+        toolBar.setSize(toolBar.getWidth(), 32);
+
         /*
          * массив с кнопками для панели инструментов
          */
-        final JButton[] buttons = {
-                new JButton("Новый"),
-                new JButton("Открыть"),
-                new JButton("Сохранить"),
-                new JButton("Показать текстовый редактор"),
-                new JButton("Скрыть текстовый редактор")
+        final JButton[] buttons = new JButton[8];
+
+        // Массив с инонками для кнопок
+        final ImageIcon[] icons = {
+                new ImageIcon("./src/image/new-file.png"),
+                new ImageIcon("./src/image/open-file.png"),
+                new ImageIcon("./src/image/save.png"),
+                new ImageIcon("./src/image/pencil.png"),
+                new ImageIcon("./src/image/no-pencil.png"),
+                new ImageIcon("./src/image/select-all-text.png"),
+                new ImageIcon("./src/image/copy.png"),
+                new ImageIcon("./src/image/paste.png")
         };
 
         // слушатель для массива с кнопками соотвественно предназначению кнопок
-        final ActionListener[] listeners = {newFileAction(), openFileAction(), saveFileAction(), viewEditor(), hideEditor()};
+        final ActionListener[] listeners = {
+                newFileAction(),
+                openFileAction(),
+                saveFileAction(),
+                viewEditorAction(),
+                hideEditorAction(),
+                selectAlltextAction(),
+                copyTextAction(),
+                pasteTextAction()
+        };
 
         // проходим по всем кнопкам панели инструментов
         for (int i = 0; i < buttons.length; i++) {
+            buttons[i] = new JButton(icons[i]);
             // добавляем кнопке соотвествующий ей слушатель
             buttons[i].addActionListener(listeners[i]);
             // добавляем кнопку в панель инструментов
@@ -301,6 +329,7 @@ public class UI extends JFrame {
          * Добавляем текстовый редактор с подсчётом строк
          */
         editorTextArea = new JTextArea();
+        editorTextArea.setComponentPopupMenu(getPopup());
         JScrollPane pane1 = new JScrollPane(editorTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         pane1.setRowHeaderView(new TextLineNumber(editorTextArea));
         pane1.setPreferredSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.75)));
@@ -311,14 +340,14 @@ public class UI extends JFrame {
          * Добавляем консоль в окно текстового редактора
          */
         console = new Console();
-        JScrollPane pane2 = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        pane2.setPreferredSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
-        pane2.setSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
+        consolePanel = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        consolePanel.setPreferredSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
+        consolePanel.setSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
 
         JPanel bottom = new JPanel();
         bottom.setLayout(new BorderLayout());
         bottom.add(new Label("Консоль"), BorderLayout.NORTH);
-        bottom.add(pane2, BorderLayout.SOUTH);
+        bottom.add(consolePanel, BorderLayout.SOUTH);
 
         editor.add(bottom, BorderLayout.SOUTH);
 
@@ -336,6 +365,15 @@ public class UI extends JFrame {
                 InterpreterThread interpreterThread = new InterpreterThread("interpreter", editorTextArea.getText(), UI.this);
                 interpreterThread.start();
 
+            }
+        });
+
+        editor.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                consolePanel.setPreferredSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
+                consolePanel.setSize(new Dimension(200, (int) Math.round(editor.getSize().height * 0.35)));
+                editor.repaint();
             }
         });
 
@@ -438,6 +476,11 @@ public class UI extends JFrame {
                 });
                 if (fileChooser.showOpenDialog(UI.this) == JFileChooser.APPROVE_OPTION) {
                     fileName = fileChooser.getSelectedFile().getPath();
+                    try {
+                        editorTextArea.setText(new String(Files.readAllBytes(Paths.get(fileName))));
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(UI.this, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    }
                     StatusL.setText(fileName);
                 }
                 else
@@ -474,17 +517,23 @@ public class UI extends JFrame {
                         return "Файлы Small C++ (*.scpp)";
                     }
                 });
-                if (fileChooser.showSaveDialog(UI.this) == JFileChooser.APPROVE_OPTION)
-                    JOptionPane.showMessageDialog(UI.this, "Файл успешно сохранён", "Сохранение", JOptionPane.INFORMATION_MESSAGE);
-                else
-                    JOptionPane.showMessageDialog(UI.this, "Ошибка при сохранении файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                if (fileChooser.showSaveDialog(UI.this) != JFileChooser.APPROVE_OPTION)
+                    JOptionPane.showMessageDialog(UI.this, "Ошибка при создании файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
+
                 File file = new File(fileChooser.getSelectedFile().getPath());
                 try {
 
                     if (!file.getName().endsWith(".scpp"))
                         file = new File(file.getPath() + ".scpp");
 
-                    file.createNewFile();
+                    if (file.createNewFile())
+                        JOptionPane.showMessageDialog(UI.this, "Файл успешно сохранён", "Сохранение", JOptionPane.INFORMATION_MESSAGE);
+                    else
+                        JOptionPane.showMessageDialog(UI.this, "Ошибка при сохранении файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
+
+                    PrintWriter writer = new PrintWriter(file.getPath());
+                    writer.print(editorTextArea.getText());
+                    writer.close();
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(UI.this, "Ошибка при сохранении файла", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
@@ -547,9 +596,46 @@ public class UI extends JFrame {
     }
 
     /*
+     * Обработчик выделения всего текста в текстовом редакторе
+     */
+    private ActionListener selectAlltextAction(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editorTextArea.select(0, editorTextArea.getText().length());
+                editor.repaint();
+            }
+        };
+    }
+
+    /*
+     * Обработчик копирования текста в буфер обмена
+     */
+    private ActionListener copyTextAction(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copy_text = editorTextArea.getSelectedText();
+            }
+        };
+    }
+
+    /*
+     * Обработчик вставки текста из буфера обмена
+     */
+    private ActionListener pasteTextAction(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editorTextArea.replaceSelection(copy_text);
+            }
+        };
+    }
+
+    /*
      * Обработчик вызова окна текстового редактора
      */
-    private ActionListener viewEditor(){
+    private ActionListener viewEditorAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -565,7 +651,7 @@ public class UI extends JFrame {
     /*
      * Обработчик сокрытия окна текстового редактора
      */
-    private ActionListener hideEditor(){
+    private ActionListener hideEditorAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -604,7 +690,7 @@ public class UI extends JFrame {
     /*
      * Обработчик вызова окна лексического анализатора
      */
-    private ActionListener viewLexer(){
+    private ActionListener viewLexerAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -618,7 +704,7 @@ public class UI extends JFrame {
     /*
      * Обработчик сокрытия окна лексического анализатора
      */
-    private ActionListener hideLexer(){
+    private ActionListener hideLexerAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -651,7 +737,7 @@ public class UI extends JFrame {
     /*
      * Обработчик вызова окна текстового таблицы лексического анализатора
      */
-    private ActionListener viewLexerTable(){
+    private ActionListener viewLexerTableAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -665,7 +751,7 @@ public class UI extends JFrame {
     /*
      * Обработчик сокрытия окна таблицы лексического анализатора
      */
-    private ActionListener hideLexerTable(){
+    private ActionListener hideLexerTableAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -698,7 +784,7 @@ public class UI extends JFrame {
     /*
      * Обработчик вызова окна ПОЛИЗа
      */
-    private ActionListener viewPoliz(){
+    private ActionListener viewPolizAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -712,7 +798,7 @@ public class UI extends JFrame {
     /*
      * Обработчик сокрытия окна ПОЛИЗа
      */
-    private ActionListener hidePoliz(){
+    private ActionListener hidePolizAction(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -745,7 +831,7 @@ public class UI extends JFrame {
     /*
      * Обработчик выбора примера 1 в меню Примеры
      */
-    private ActionListener viewExample1(){
+    private ActionListener viewExample1Action(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -754,6 +840,10 @@ public class UI extends JFrame {
                         "\n" +
                         "    int a = 0;\n" +
                         "    int b = cin();\n" +
+                        "    double c = 10.14;\n" +
+                        "    double d = cin();\n" +
+                        "    string A = \"Переменная String\";\n" +
+                        "    string B = cin();\n" +
                         "\n" +
                         "    return 0;\n" +
                         "}"
@@ -765,7 +855,7 @@ public class UI extends JFrame {
     /*
      * Обработчик выбора примера 2 в меню Примеры
      */
-    private ActionListener viewExample2(){
+    private ActionListener viewExample2Action(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -773,10 +863,11 @@ public class UI extends JFrame {
                         "    int main(){\n" +
                         "        \n" +
                         "        int a = 5;\n" +
-                        "        if (a < 10){\n" +
-                        "            cout(\"a < 10\");\n" +
+                        "        int b = cin();\n" +
+                        "        if (a < b){\n" +
+                        "            cout(\"a < b\");\n" +
                         "        } else {\n" +
-                        "            cout(\"a > 10\");\n" +
+                        "            cout(\"a > b\");\n" +
                         "        }\n" +
                         "        \n" +
                         "        return 0;\n" +
@@ -789,7 +880,7 @@ public class UI extends JFrame {
     /*
      * Обработчик выбора примера 3 в меню Примеры
      */
-    private ActionListener viewExample3(){
+    private ActionListener viewExample3Action(){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -802,7 +893,7 @@ public class UI extends JFrame {
                                 "            cout(\"Внутри цикла 2\");\n" +
                                 "        }\n" +
                                 "    }\n" +
-                                "    cout(\"После цикла 2\");\n" +
+                                "    cout(\"После цикла 1\");\n" +
                                 "\n" +
                                 "    return 0;\n" +
                                 "}"
@@ -814,23 +905,48 @@ public class UI extends JFrame {
     /*
      * Обработчик выбора примера 4 в меню Примеры
      */
-    private ActionListener viewExample4(){
+    private ActionListener viewExample4Action() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 editorTextArea.setText(
                         "int main(){\n" +
-                                "    \n" +
-                                "    int a = 5;\n" +
-                                "    int b = 1;\n" +
-                                "    if (a > b || a <= b){\n" +
-                                "        cout(\"a > b\");\n" +
-                                "    } else {\n" +
-                                "        cout(\"b > a\");\n" +
-                                "    }\n" +
-                                "    \n" +
-                                "    return 0;\n" +
-                                "    }"
+                        "    int a = 5;\n" +
+                        "    m:\n" +
+                        "    int b = cin();\n" +
+                        "    if (a > b){\n" +
+                        "       goto m;\n" +
+                        "    }\n" +
+                        "    return 0;\n" +
+                        "}"
+                );
+            }
+        };
+    }
+
+    /*
+     * Обработчик выбора примера 5 в меню Примеры
+     */
+    private ActionListener viewExample5Action(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editorTextArea.setText(
+                        "int main(){\n" +
+                        "\n" +
+                        "    int a = 0;\n" +
+                        "    int b = 5;\n" +
+                        "    int r = a + b;\n" +
+                        "\n" +
+                        "    double c = 10.14;\n" +
+                        "    double d = 11.25;\n" +
+                        "    double f = c + d;\n" +
+                        "\n" +
+                        "    string D = \" Переменная String!\";\n" +
+                        "    string E = D + \"Переменная String 2!\";\n" +
+                        "\n" +
+                        "    return 0;\n" +
+                        "}"
                 );
             }
         };
@@ -849,5 +965,102 @@ public class UI extends JFrame {
             StatusTime.setText(date.toString());
         }
     };
+
+    /*
+     * Метод, возвращающий окно со справкой по работе с программой
+     */
+    private JFrame getHelpFrame() throws IOException {
+        helpFrame = new JFrame("Справка");
+        helpFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+
+        helpFrame.add(new JScrollPane(new JLabel(new String(Files.readAllBytes(Paths.get("./src/html-files/help.html"))))));
+
+        helpFrame.setSize(new Dimension(1050,720));
+        helpFrame.setVisible(true);
+
+        return helpFrame;
+    }
+
+    /*
+     * Обработчик вызова окна со справкой
+     */
+    private ActionListener viewHelpFrameAction(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    getHelpFrame();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        };
+    }
+
+    /*
+     * Метод, возвращающий контекстное меню для текстового редактора
+     */
+    private JPopupMenu getPopup() {
+        final JPopupMenu popup = new JPopupMenu();
+
+        final JMenuItem newFile = new JMenuItem("Новый");
+        final JMenuItem openFile = new JMenuItem("Открыть");
+        final JMenuItem save = new JMenuItem("Сохранить");
+
+        final JMenuItem selectAll = new JMenuItem("Выделить всё");
+        final JMenuItem copy = new JMenuItem("Копировать");
+        final JMenuItem paste = new JMenuItem("Вставить");
+
+        newFile.addActionListener(newFileAction());
+        openFile.addActionListener(openFileAction());
+        save.addActionListener(saveFileAction());
+        selectAll.addActionListener(selectAlltextAction());
+        copy.addActionListener(copyTextAction());
+        paste.addActionListener(pasteTextAction());
+
+        popup.add(newFile);
+        popup.add(openFile);
+        popup.add(save);
+        popup.add(new JSeparator());
+        popup.add(selectAll);
+        popup.add(copy);
+        popup.add(paste);
+
+        return popup;
+    }
+
+    /*
+     * Обработчик вызова информации о программе
+     */
+    private ActionListener infoAction() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JPanel panel = new JPanel();
+                final GridBagConstraints gbc = new GridBagConstraints();
+                final GridBagLayout gbl = new GridBagLayout();
+                panel.setLayout(gbl);
+                final Font font = new Font("Verdana", Font.PLAIN, 12);
+                final JLabel jLabel = new JLabel("<html><font face=’verdana’ size = 5><p align='center'>Курсовая работа по СПО</p></html>");
+                jLabel.setVerticalAlignment(JLabel.TOP);
+                panel.add(jLabel, gbc);
+                gbc.gridy = 1;
+
+                final JLabel jLabel1 = new JLabel();
+                String s = "<html><font face=’verdana’ size = 4>"+"<br><p align='center'>Студента группы СКС-18<br>"+"Романко Б. А.<br>"+"На тему:<br>"+"\"Small C++\"</p><br><br><br><br></html>";
+                jLabel1.setText(s);
+                jLabel1.setVerticalAlignment(JLabel.CENTER);
+                panel.add(jLabel1, gbc);
+                gbc.gridy = 2;
+
+                final JLabel jLabel2 = new JLabel("<html><font face=’verdana’ size = 4><p align='center'>Алчевск, 2021</p></html>");
+                jLabel2.setVerticalAlignment(JLabel.BOTTOM);
+                panel.add(jLabel2, gbc);
+                gbc.gridy = 0;
+
+                JOptionPane.showMessageDialog(null, panel, "О программе", JOptionPane.INFORMATION_MESSAGE);
+            }
+        };
+    }
 
 }

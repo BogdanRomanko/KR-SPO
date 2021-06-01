@@ -137,7 +137,7 @@ public class Interpreter {
                         if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
                             //проверяем является ли переменная нужного нам типа
                             if (!varType.get(i).equals("int"))
-                                Errors.errors(7);
+                                ui.console.write(Errors.getErrors(7));
                             //заменяем имя переменной на её значение
                             tempVarValue = tempVarValue.replace(varName.get(i), varValue.get(i).toString());
                         }
@@ -193,7 +193,7 @@ public class Interpreter {
                         if (poliz.get(index + 3).split(" - ")[0].contains(varName.get(i))) {
                             //проверяем является ли переменная нужного нам типа
                             if (!varType.get(i).equals("double"))
-                                Errors.errors(7);
+                                ui.console.write(Errors.getErrors(7));
                             //заменяем имя переменной на её значение
                             tempVarValue = tempVarValue.replace(varName.get(i), varValue.get(i).toString());
                         }
@@ -243,7 +243,7 @@ public class Interpreter {
                 else if (!poliz.get(index + 3).split(" - ")[0].contains("R")) {
                     if (poliz.get(index + 3).split(" - ")[0].charAt(0) == 'M' && poliz.get(index + 3).split(" - ")[0].charAt(1) == 'A') {
 
-                        String tempVar = poliz.get(index + 3);
+                        String tempVar = poliz.get(index + 3).split(" - ")[0];
                         tempVar = tempVar.replaceAll("\\+", "").replaceAll("\"", "").substring(1);
 
                         String tempVarValue = "";
@@ -743,7 +743,7 @@ public class Interpreter {
                         //если склеиваются две строки
                         if (poliz.get(index + 1).split(" - ")[0].charAt(0) == 'M' && poliz.get(index + 1).split(" - ")[0].charAt(1) == 'A') {
                             String tempVarValue = "";
-                            tempVarValue = poliz.get(index + 1);
+                            tempVarValue = poliz.get(index + 1).split(" - ")[0];
                             tempVarValue = tempVarValue.replaceAll(" \\+ ", " ");
 
                             //если внутри считаемого значения есть другие переменные
