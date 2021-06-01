@@ -201,7 +201,7 @@ public class Interpreter {
 
                     List<String> expression = StrToListStr(tempVarValue);
                     varName.add(poliz.get(index).split(" - ")[0].substring(1));
-                    varValue.add((int) Double.parseDouble(Ideone.calc(expression).toString()));
+                    varValue.add(Double.parseDouble(Ideone.calc(expression).toString()));
                     varType.add("double");
                     ui.console.write("[INTERPRETER] - " + varType.get(varType.size() - 1) + " " + varName.get(varName.size() - 1) + " = " + varValue.get(varValue.size() - 1));
                     count += 3;
@@ -495,16 +495,16 @@ public class Interpreter {
                         varValue.remove(coords);
                         varType.remove(coords);
                     }
+                    System.out.println(Arrays.toString(loopPoliz.getAll()));
+
+                    count += 12 + loopPoliz.getSize() - 2;
                 }
             }
         }
         else {
             ui.console.write(Errors.getErrors(8));
             count = poliz.getSize() - 1;
-            return;
         }
-
-        count += 12 + loopPoliz.getSize() - 1;
 
     }
 
