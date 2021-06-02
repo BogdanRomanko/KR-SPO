@@ -837,16 +837,20 @@ public class UI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 editorTextArea.setText(
                         "int main(){\n" +
-                        "\n" +
-                        "    int a = 0;\n" +
-                        "    int b = cin();\n" +
-                        "    double c = 10.14;\n" +
-                        "    double d = cin();\n" +
-                        "    string A = \"Переменная String\";\n" +
-                        "    string B = cin();\n" +
-                        "\n" +
-                        "    return 0;\n" +
-                        "}"
+                            "\n" +
+                            "    int a = 0;\n" +
+                            "    int b = 5;\n" +
+                            "    int r = a + b;\n" +
+                            "\n" +
+                            "    double c = 10.14;\n" +
+                            "    double d = 11.25;\n" +
+                            "    double f = c + d;\n" +
+                            "\n" +
+                            "    string D = \" Переменная String!\";\n" +
+                            "    string E = D + \"Переменная String 2!\";\n" +
+                            "\n" +
+                            "    return 0;\n" +
+                            "}"
                 );
             }
         };
@@ -934,16 +938,14 @@ public class UI extends JFrame {
                 editorTextArea.setText(
                         "int main(){\n" +
                         "\n" +
-                        "    int a = 0;\n" +
-                        "    int b = 5;\n" +
-                        "    int r = a + b;\n" +
-                        "\n" +
-                        "    double c = 10.14;\n" +
-                        "    double d = 11.25;\n" +
-                        "    double f = c + d;\n" +
-                        "\n" +
-                        "    string D = \" Переменная String!\";\n" +
-                        "    string E = D + \"Переменная String 2!\";\n" +
+                        "    double n = 250.0;\n" +
+                        "    double k = 1.0;\n" +
+                        "    double s = 0.0;\n" +
+                        "    for (int i = 0; i < 250; i = i + 1){\n" +
+                        "        s = s + k;\n" +
+                        "        k = k + 1;\n" +
+                        "    }\n" +
+                        "    double r = s / 250;\n" +
                         "\n" +
                         "    return 0;\n" +
                         "}"
